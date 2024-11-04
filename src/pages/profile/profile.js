@@ -6,6 +6,8 @@ import './profile.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { LoginMotvWithToken } from "../../services/calls";
+import { Logout } from "../../utils/commonFunctions";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
     const [containerCount, setContainerCount] = useState(-1); // Começa em 0 para o primeiro elemento
@@ -14,6 +16,16 @@ function Profile() {
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const [profiles, setProfiles] = useState([]);
+    const navigate = useNavigate()
+
+
+    const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
+        localStorage.setItem("profileid", profiles_id);
+        localStorage.setItem("profileimage", profile_image);
+        localStorage.setItem("profilename", profiles_name);
+        localStorage.setItem("authorization", token);
+        navigate('/home');
+    }
 
     useEffect(() => {
         const loadData = async () => {
@@ -43,10 +55,15 @@ function Profile() {
                         const focusedElement = document.activeElement;
                         if (focusedElement.classList.contains('profileButton')) {
                             const index = Array.from(document.querySelectorAll('.profileButton')).indexOf(focusedElement);
+                            SaveProfileData(
+                                profiles.profiles[index]?.profiles_name,
+                                profiles.profiles[index]?.token,
+                                profiles.profiles[index]?.profiles_id,
+                                profiles.profiles[index]?.image
+                            )
                             console.log("Dados do perfil:", profiles.profiles[index]);
                         } else if (focusedElement.id === "logoutButton") {
-                            // Lógica para o botão de logout, se necessário
-                            console.log("opa")
+                            Logout(navigate)
                         }
                     },
                     escape: () => {
