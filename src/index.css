@@ -1,0 +1,127 @@
+*{
+  margin: 0;
+  padding: 0;
+}
+
+@font-face {
+  font-family: "Exo";
+  src: url('./fonts/Exo2-VariableFont_wght.ttf');
+}
+@font-face {
+  font-family: "Dyna";
+  src: url('./fonts/DynaPuff-VariableFont_wdth\,wght.ttf');
+}
+@font-face {
+  font-family: "Itim";
+  src: url('./fonts/Itim-Regular.ttf');
+}
+
+body {
+  width: 1920px;
+  height: auto;
+  background-color: rgb(17, 16, 20);
+  margin: 0;
+  padding: 0;
+  font-family: "Georgia", "sans-serif";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+  width: 1920px;
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+
+.declaredHeight {
+  height: 1080px;
+}
+
+.declaredOverflow {
+  overflow: hidden;
+}
+
+.flexColumn {
+  flex-direction: column;
+}
+
+h1 {
+  color: white;
+  font-weight: bold;
+  font-size: 4rem;
+  text-shadow: 2px 2px rgba(255, 255, 255, 0.3);
+}
+
+h2 {
+  color: white;
+  font-weight: bold;
+  font-size: 3rem;
+  text-shadow: 2px 2px rgba(94, 94, 94, 0.3);
+
+}
+
+h3 {
+  font-size: 2rem;
+  color: white;
+  font-weight: bold;
+}
+
+h4 {
+  color: rgb(210, 210, 210);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+h5 {
+  color: rgb(210, 210, 210);
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+h6 {
+  color: rgb(197, 196, 196);
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+p {
+  color: rgb(200, 200, 200);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+button {
+  border: none;
+  font-size: 20px;
+  height: 60px;
+background-color: rgb(190, 0, 3);
+border-radius: 15px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+a {
+
+}
+
+.flex {
+	display: flex;
+}
+
+.selected:focus-within {
+  border: 5px solid rgb(255, 51, 51);
+box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition-timing-function: ease-in;
+}
+
+.selectedCard:focus-within {
+  border: 5px solid rgb(255, 51, 51);
+box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition-timing-function: ease-in;
+}

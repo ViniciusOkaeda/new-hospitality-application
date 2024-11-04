@@ -1,0 +1,51 @@
+.headerContainer {
+    width: 100%;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.profileContainer {
+    width: 100%;
+    height: 45%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+}
+
+.profileContainer::-webkit-scrollbar {
+    display: none;
+}
+
+.profileContent {
+    width: 250px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.profileButton {
+width: 200px;
+height: 200px;
+background-color: #333;
+border-radius: 100%;
+}
+
+
+.footerContainer {
+    width: 100%;
+    height: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.footerButton {
+    width: 250px;
+    margin-right: 60px;
+    height: 50px;
+}
