@@ -1,5 +1,6 @@
 import api from "./api"
 import { useNavigate, useParams } from "react-router-dom";
+import { GetDevicesType, GetLanguage } from "../utils/constants";
 
 
 
@@ -10,7 +11,7 @@ export const LoginMotv = async (navigate) => {
     //var login = document.getElementById("input-username").value;
     //var password = document.getElementById("input-password").value;
 
-    var login = "developer.youcast";
+    var login = "developer.demo";
     var password = "12345";
     var vendors_id = 2;
 
@@ -49,9 +50,25 @@ export const LoginMotvWithToken = async (navigate) => {
 
 export const GetHomepageV2 = async () => {
     const auth = localStorage.getItem("authorization");
-    const profile = localStorage.getItem("profileid");
-    const language = 'pt';
-    const devicesType = 'webos';
+    const profile = sessionStorage.getItem("profileid");
+    const language = await GetLanguage();
+    const devicesType = await GetDevicesType();
+
+    try {
+        const response = await api.post('getHomepageV2', 
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
 
 }
 

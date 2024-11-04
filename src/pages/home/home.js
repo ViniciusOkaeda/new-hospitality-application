@@ -12,18 +12,26 @@ function Home() {
     const [selectableContainers, setSelectableContainers] = useState([]);
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
-    const [profiles, setProfiles] = useState([]);
+    const [homepageContent, setHomepageContent] = useState([]);
     const navigate = useNavigate()
 
+    const [haveFocusedEvent, setHaveFocusedEvent] = useState(false);
+    const [focusedContent, setFocusedContent] = useState([])
 
+    const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
+        sessionStorage.setItem("profileid", btoa(profiles_id));
+        localStorage.setItem("profileimage", profile_image);
+        localStorage.setItem("profilename", profiles_name);
+        navigate('/home');
+    }
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const result = await GetHomepageV2()
+                const result = await GetHomepageV2();
                 if (result) {
-                    if(result.status === 1) {
-                        setProfiles(result.response)
+                    if (result.status === 1) {
+                        setHomepageContent(result.response)
                     }
                 }
             } catch (err) {
@@ -35,6 +43,9 @@ function Home() {
 
         loadData(); // Chama a função de carregamento ao montar o componente
 
+    }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
+
+    useEffect(() => {
         const selectableContainer = document.querySelectorAll('.selectedContainer');
         setSelectableContainers(selectableContainer);
         // Configuração do keyDownHandler
@@ -44,11 +55,11 @@ function Home() {
                     enter: () => {
                         const focusedElement = document.activeElement;
                         if (focusedElement.classList.contains('profileButton')) {
-                            //const index = Array.from(document.querySelectorAll('.profileButton')).indexOf(focusedElement);
+                            const index = Array.from(document.querySelectorAll('.profileButton')).indexOf(focusedElement);
 
                             //console.log("Dados do perfil:", profiles.profiles[index]);
                         } else if (focusedElement.id === "logoutButton") {
-
+                            //Logout(navigate)
                         }
                     },
                     escape: () => {
@@ -60,42 +71,47 @@ function Home() {
                                 const newCount = prev - 1;
                                 setCardCount(0)
                                 // Focar no card anterior
-                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
+                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount]?.focus();
                                 return newCount;
                             });
                         }
                     },
                     down: () => {
+                        const focusedElement = document.activeElement;
+
                         if (containerCount < selectableContainers.length - 1) {
+                            if (focusedElement.classList.contains('cardButton')) {
+                                console.log("o meu focused", focusedElement)
+
+                                const index = Array.from(document.querySelectorAll('.cardButton')).indexOf(focusedElement);
+    
+                                //console.log("Dados do perfil:", profiles.profiles[index]);
+                            } 
                             setContainerCount(prev => {
                                 const newCount = prev + 1;
                                 // Focar no próximo card (resetando cardCount se necessário)
-                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
+                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount]?.focus();
                                 return newCount;
                             });
                         }
                     },
                     left: () => {
-                        if(containerCount === 0 ) {
-                            if(cardCount > 0) {
+                            if (cardCount > 0) {
                                 setCardCount(prev => {
                                     const newCardCount = prev - 1;
-                                    selectableContainer[0]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
+                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
                                     return newCardCount;
                                 })
-                            }
                         }
                     },
                     right: () => {
-                        if(containerCount === 0 ) {
-                            if(cardCount < selectableContainers[0]?.getElementsByClassName('selectedCard').length -1) {
+                            if (cardCount < selectableContainers[containerCount]?.getElementsByClassName('selectedCard').length - 1) {
                                 setCardCount(prev => {
                                     const newCardCount = prev + 1;
-                                    selectableContainer[0]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
+                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
                                     return newCardCount;
                                 })
                                 //terminar aqui
-                            }
                             //console.log("VEJAMOS", )
                         }
                         //console.log("Right key pressed on Page 1", selectableContainers[0]?.getElementsByClassName('selectedCard'));
@@ -115,51 +131,101 @@ function Home() {
         return () => {
             document.removeEventListener("keydown", keyDownHandler);
         };
-    }, [containerCount, cardCount, profiles]); // Dependência vazia para garantir que loadData só seja chamado uma vez
 
+    }, [containerCount, cardCount, homepageContent]); // Dependência vazia para garantir que loadData só seja chamado uma vez
+
+    const renderComponentByType = (item, idx) => {
+        switch (item.type) {
+            case "category selection":
+                return (
+                    <div key={idx} className="cardsContainer ">
+                        <div className="cardsTitle paddingLeftDefault">
+                            <h3>{item.title}</h3>
+                        </div>
+
+                        <div className="cardsContent selectedContainer">
+                            {item.data.map((rows, idx) => {
+
+                                return(
+                                    <button 
+                                    key={idx} 
+                                    className="cardButton selectedCard"
+                                    onFocus={(() => {
+                                        setFocusedContent(item);
+                                        setHaveFocusedEvent(true)
+                                    })}
+                                    >
+                                        <img src={rows.image} className="cardImage"></img>
+                                    </button>
+                                )
+                            })}
+
+                            <div className="cardsFinalMargin"></div>
+                        </div>
+                    </div>
+                );
+            case "channels":
+                return (
+                    <div className="channels">
+                        <h3>{item.title}</h3>
+                        {/* Adicione o conteúdo dos canais aqui */}
+                    </div>
+                );
+            case "banner":
+                return (
+                    <div className="banner">
+                        <h3>{item.title}</h3>
+                        {/* Adicione o conteúdo do banner aqui */}
+                    </div>
+                );
+            default:
+                return null; // Retorna nada se o tipo não for reconhecido
+        }};
+
+    
     return (
         <>
-        {loading ? (
-            <Loader /> // Exibe o Loader enquanto carrega
-        ) : error ? (
-            <div className="initialContainer"><h3>Erro: {error}</h3></div> // Exibindo mensagem de erro, se houver
+            {loading ? (
+                <Loader /> // Exibe o Loader enquanto carrega
+            ) : error ? (
+                <div className="initialContainer"><h3>Erro: {error}</h3></div> // Exibindo mensagem de erro, se houver
 
 
-        ) : (
-            <div className="flex container declaredHeight flexColumn">
-                <div className="headerContainer">
-                    <h2>Quem está assistindo?</h2>
-                </div>
+            ) : (
+                <div className="flex container flexColumn">
 
-                <div className="profileContainer selectedContainer">
+                    {haveFocusedEvent === true ? 
+                        <div className="focusedContent">
+                            {console.log("opa", focusedContent)}
+                            <div className="focusedContentText"></div>
+                            <div 
+                            className="focusedContentImage" 
+                            style={{
+                                display: 'block',
+                                transition: '800ms ease-out',
+                                backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 1) 100%), linear-gradient(to left, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 1) 100%), url(${focusedContent.image_widescreen !== "null" ? focusedContent.image_widescreen : focusedContent.image})`,
+                                backgroundSize: 'cover'
+                 
+                
+                            }}
+                            >
 
-                    {profiles.profiles.map((item, idx) => {
+                            </div>
+                        </div>
+                    : ""}
 
-                        return(
 
-                    <div key={idx} className="profileContent">
-                        <button className="profileButton selectedCard">
-                            <img src={item.image}></img>
-                        </button>
-
-                        <h4>{item.profiles_name}</h4>
-                    </div>
-
-                        )
+                    {homepageContent.map((item, idx) => {
+                        return renderComponentByType(item, idx)
                     })}
 
 
 
                 </div>
+            )
 
-                <div className="footerContainer selectedContainer">
-                    <button id="logoutButton" className="footerButton selectedCard">Sair</button>
-                </div>
-            </div>
-        )
-    
-    }
-        
+            }
+
         </>
 
     );

@@ -6,11 +6,14 @@ export const GetDevicesType = () => {
 
 export const GetLanguage = () => {
     const language = btoa("pt")
+
+    return language
 }
 
 
 export const Logout = (navigate) => {
 localStorage.clear();
+sessionStorage.clear();
 navigate('/login')
 }
 

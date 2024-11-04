@@ -25,6 +25,7 @@ body {
   font-family: "Georgia", "sans-serif";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 .container {
@@ -42,8 +43,15 @@ body {
   overflow: hidden;
 }
 
+.declaredOverflowActive {
+}
+
 .flexColumn {
   flex-direction: column;
+}
+
+.paddingLeftDefault {
+  padding-left: 120px; /* criar classe independente*/
 }
 
 h1 {
