@@ -47,3 +47,11 @@ export const LoginMotvWithToken = async (navigate) => {
     }
 }
 
+export const GetHomepageV2 = async () => {
+    const auth = localStorage.getItem("authorization");
+    const profile = localStorage.getItem("profileid");
+    const language = 'pt';
+    const devicesType = 'webos';
+
+}
+

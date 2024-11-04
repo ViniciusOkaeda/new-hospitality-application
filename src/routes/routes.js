@@ -3,6 +3,7 @@ import { Routes, BrowserRouter, Route, Navigate} from "react-router-dom";
 import Player from "../pages/player/player";
 import Login from "../pages/login/login";
 import Profile from "../pages/profile/profile";
+import Home from "../pages/home/home";
 
 function AllRoutes() {
 
@@ -13,7 +14,8 @@ function AllRoutes() {
         <BrowserRouter>
             <Routes>
                 <Route exact path="/login" element={<Login />} />    
-                <Route exact path="/profile" element={<Profile />} />    
+                <Route path="/profile" element={<Profile />} />    
+                <Route path="/home" element={<Home />} />    
                 <Route path="/player" element={<Player />} />   
 
 
