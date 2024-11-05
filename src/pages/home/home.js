@@ -5,6 +5,7 @@ import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
 import { GetHomepageV2 } from "../../services/calls";
 import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating } from "../../utils/constants";
+import { Menu } from "../../components/menu/menu";
 
 
 function Home() {
@@ -18,6 +19,8 @@ function Home() {
 
     const [haveFocusedEvent, setHaveFocusedEvent] = useState(false);
     const [focusedContent, setFocusedContent] = useState([])
+
+    const [menuFocused, setMenuFocused] = useState(false);
 
     const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
         sessionStorage.setItem("profileid", btoa(profiles_id));
@@ -193,13 +196,19 @@ function Home() {
 
 
             ) : (
-                <div className="flex container flexColumn">
+                <div className="flex container flexColumn declaredOverflow">
+                    <Menu status={menuFocused} />
 
                     {haveFocusedEvent === true ? 
                         <div className="focusedContent">
                             {console.log("opa", focusedContent)}
-                            <div className="focusedContentText ">
-                                {focusedContent.title !== null ? 
+                            <div className="focusedContentText" style={{minHeight: focusedContent.name_image !== null ? "75%" : "50%"}}>
+                                {focusedContent.title !== null || focusedContent.name_image !== null ? 
+                                    focusedContent.name_image !== null ? 
+                                    <div className="focusedImageTitle paddingLeftDefault focusedMaxWidth">
+                                        <img src={focusedContent.name_image} className="focusedImageTitleImg"></img>
+                                    </div>
+                                    :
                                     <div className="focusedTitle paddingLeftDefault focusedMaxWidth">
                                         <h2>{focusedContent.title}</h2>
                                     </div>
@@ -231,7 +240,7 @@ function Home() {
                                        </div> 
                                     : ""}
 
-                                    {focusedContent.start !== null ?
+                                    {focusedContent.start !== null && focusedContent.type !== "VOD" ?
                                     <>
                                     <div className="focusedStartAt"><h6>{FormatDate(focusedContent.start)}</h6></div>  
                                     <span className="focusedBasicSpacement">●</span>
@@ -251,6 +260,21 @@ function Home() {
                                     {focusedContent.genres !== null ?
                                 <div className="focusedGenres"><h6>{focusedContent.genres}</h6></div>
                                 : ""}
+
+                                {focusedContent.released !== null && focusedContent.type === "VOD" ?
+                                    <>
+                                    <span className="focusedBasicSpacement">●</span>
+                                    <div className="focusedReleased"><h6>{focusedContent.released}</h6></div>  
+                                    </>
+                                :""}
+                                
+                                {focusedContent.imdb_rating !== null && focusedContent.type === "VOD" ?
+                                    <>
+                                    <span className="focusedImdbBackground"><h6>IMDb</h6></span>
+                                    <span className="focusedImdbTextSpan1"><h6>{focusedContent.imdb_rating}<span className="focusedImdbTextSpan2">/10</span></h6> </span>
+
+                                    </>
+                                :""}
 
                                     {focusedContent.rating !== null ?
                                 <div 
@@ -293,10 +317,15 @@ function Home() {
                         </div>
                     : ""}
 
-
-                    {homepageContent.map((item, idx) => {
-                        return renderComponentByType(item, idx)
-                    })}
+                    <div className="cardRows"
+                    style={{
+                        maxHeight: haveFocusedEvent === true ? "560px" : "none"
+                    }}
+                    >
+                        {homepageContent.map((item, idx) => {
+                            return renderComponentByType(item, idx)
+                        })}
+                    </div>
 
 
 
