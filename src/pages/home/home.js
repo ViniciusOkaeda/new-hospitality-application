@@ -4,6 +4,7 @@ import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
 import { GetHomepageV2 } from "../../services/calls";
+import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating } from "../../utils/constants";
 
 
 function Home() {
@@ -151,7 +152,7 @@ function Home() {
                                     key={idx} 
                                     className="cardButton selectedCard"
                                     onFocus={(() => {
-                                        setFocusedContent(item);
+                                        setFocusedContent(rows);
                                         setHaveFocusedEvent(true)
                                     })}
                                     >
@@ -197,13 +198,91 @@ function Home() {
                     {haveFocusedEvent === true ? 
                         <div className="focusedContent">
                             {console.log("opa", focusedContent)}
-                            <div className="focusedContentText"></div>
+                            <div className="focusedContentText ">
+                                {focusedContent.title !== null ? 
+                                    <div className="focusedTitle paddingLeftDefault focusedMaxWidth">
+                                        <h2>{focusedContent.title}</h2>
+                                    </div>
+                                
+                                : ""}
+
+                                {focusedContent.episode !== null ?
+                                <div className="focusedSeasonAndEpisode paddingLeftDefault">
+                                    <h5>{focusedContent.subtitle !== null ? focusedContent.subtitle : focusedContent.episode} ({focusedContent.episode}) </h5>
+                                </div>
+                                
+                                : ""}
+
+                                {
+                                    focusedContent.channels_logo !== null ||
+                                    focusedContent.start !== null ||
+                                    focusedContent.duration !== null ||
+                                    focusedContent.genres !== null ||
+                                    focusedContent.rating !== null ? 
+                                    <div className="focusedDetails paddingLeftDefault">
+
+                                        {focusedContent.channels_logo !== null ?
+                                       <div className="focusedChannelImage">
+                                        <img src={
+                                            focusedContent.channels_logo_widescreen !== null ?
+                                            focusedContent.channels_logo_widescreen :
+                                            focusedContent.channels_logo
+                                        }></img>
+                                       </div> 
+                                    : ""}
+
+                                    {focusedContent.start !== null ?
+                                    <>
+                                    <div className="focusedStartAt"><h6>{FormatDate(focusedContent.start)}</h6></div>  
+                                    <span className="focusedBasicSpacement">●</span>
+                                    </>
+                                :""}
+
+
+
+
+                                    {focusedContent.duration !== null ?
+                                    <>
+                                    <div className="focusedDuration"><h6>{FormatDuration(focusedContent.duration) + " min"}</h6></div>  
+                                    <span className="focusedBasicSpacement">●</span>
+                                    </>
+                                :""}
+
+                                    {focusedContent.genres !== null ?
+                                <div className="focusedGenres"><h6>{focusedContent.genres}</h6></div>
+                                : ""}
+
+                                    {focusedContent.rating !== null ?
+                                <div 
+                                className="focusedRating ratingBase"
+                                style={{
+                                    backgroundColor: FormatRating(focusedContent.rating)
+                                }}
+                                >A{focusedContent.rating}</div>
+                                : ""}
+
+
+                                    </div>
+                                    : ""
+                                }
+
+
+                                
+
+                                {focusedContent.description !== null ? 
+                                <div className="focusedDescription paddingLeftDefault focusedMaxWidth">
+                                    <p>{FormatDescriptionLength(focusedContent.description)}</p>
+                                </div>
+                                
+                                : ""}
+                            </div>
+
                             <div 
                             className="focusedContentImage" 
                             style={{
                                 display: 'block',
                                 transition: '800ms ease-out',
-                                backgroundImage: `linear-gradient(to bottom, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 1) 100%), linear-gradient(to left, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 1) 100%), url(${focusedContent.image_widescreen !== "null" ? focusedContent.image_widescreen : focusedContent.image})`,
+                                backgroundImage: `linear-gradient(to bottom, rgba(17, 16, 20, 0) 75%, rgba(17, 16, 20, 1) 100%), linear-gradient(to left, rgba(17, 16, 20, 0) 75%, rgba(17, 16, 20, 1) 100%), url(${focusedContent.image_widescreen !== null ? focusedContent.image_widescreen : focusedContent.image})`,
                                 backgroundSize: 'cover'
                  
                 

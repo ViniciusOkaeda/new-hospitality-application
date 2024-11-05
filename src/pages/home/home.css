@@ -2,22 +2,64 @@
 
 .focusedContent {
     width: 100%;
-    height: 700px;
-    background-color: red;
+    height: 600px;
     margin-bottom: -80px;
     display: flex;
 }
 
 .focusedContentText {
     width: 45%;
-    height: 100%;
+    height: auto;
+    min-height: 50%;
+    max-height: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin: auto 0;
     background-color: blue;
+}
+
+.focusedMaxWidth {
+    max-width: 80%;
+}
+
+.focusedTitle {
+    font-family: "Dyna";
+    font-weight: 100;
+    text-shadow: none;
+}
+.focusedSeasonAndEpisode {}
+.focusedDetails {
+    display: flex;
+    align-items: center;
+}
+.focusedChannelImage img{
+    height: 40px;
+}
+.focusedStartAt{}
+.focusedDuration {}
+.focusedGenre {}
+.focusedRating {
+    width: 25px;
+    height: 30px;
+    margin-left: 10px;
+}
+
+.focusedDescription {
+    margin-top: 20px;
+}
+
+.focusedBasicSpacement {
+    color: rgba(255, 255, 255, 1);
+    font-size: 0.25rem;
+    margin: 0 5px;
 }
 
 .focusedContentImage {
     width: 55%;
     height: 100%;
 }
+
 
 
 
