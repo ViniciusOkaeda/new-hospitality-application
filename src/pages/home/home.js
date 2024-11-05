@@ -20,7 +20,7 @@ function Home() {
     const [haveFocusedEvent, setHaveFocusedEvent] = useState(false);
     const [focusedContent, setFocusedContent] = useState([])
 
-    const [menuFocused, setMenuFocused] = useState(false);
+    const [menuFocused, setMenuFocused] = useState(true);
 
     const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
         sessionStorage.setItem("profileid", btoa(profiles_id));

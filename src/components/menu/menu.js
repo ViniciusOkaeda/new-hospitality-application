@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import { LoginMotvWithToken } from "../../services/calls";
 import './menu.css';
 
 import SearchIcon from '../../images/search3.png'
@@ -11,7 +12,35 @@ import CatchupIcon from '../../images/left-arrow.png'
 import ConfigIcon from '../../images/settings.png'
 import LogoutIcon from '../../images/logout.png'
 
+import { useNavigate } from "react-router-dom";
+
 export const Menu = (status) => {
+
+    const [profile, setProfile] = useState([]);
+    const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
+    const [error, setError] = useState('');
+    const navigate = useNavigate()
+
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const result = await LoginMotvWithToken();
+                if (result) {
+                    if(result.status === 1) {
+                        setProfile(result.response.profiles[0])
+                    }
+                }
+            } catch (err) {
+                setError(err.message || 'An error occurred');
+            } finally {
+                setLoading(false); // Dados carregados, então setar como false
+            }
+        };
+
+        loadData(); // Chama a função de carregamento ao montar o componente
+
+    }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
     console.log("o status é ", status.status)
 
     return(
@@ -25,7 +54,10 @@ export const Menu = (status) => {
                 <div className="menuIconButtons">
                     <div className="menuProfileButton">
                         {status.status === true ? 
-                        <button className="iconButtonProfile"></button>
+                        <button className="iconButtonProfile">
+                            <img src={profile.image} className="iconButtonImgProfile"></img>
+
+                        </button>
                         
                         : ""}
                     </div>
@@ -74,7 +106,7 @@ export const Menu = (status) => {
             <div className="menuRightContainer">
                 <div className="menuIconTexts">
                     <div className="menuProfileText">
-                        <h4>Vinicius</h4>
+                        <h4>{profile.profiles_name}</h4>
                         <h6>Trocar Perfil</h6>
                     </div>
 
