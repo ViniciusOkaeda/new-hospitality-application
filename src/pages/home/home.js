@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import './home.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
@@ -20,9 +20,22 @@ function Home() {
 
     const [haveFocusedEvent, setHaveFocusedEvent] = useState(false);
     const [focusedContent, setFocusedContent] = useState([])
-    console.log("meu focusedevent", focusedContent)
+
+    const model = 1 //auxiliar para nao precisar focar e exibir cards
+
 
     const [menuFocused, setMenuFocused] = useState(false);
+
+    const [divDimensions, setDivDimensions] = useState({
+        visibleWidth: 0,
+        visibleHeight: 0,
+        totalWidth: 0,
+        totalHeight: 0,
+    });
+    const divRef = useRef(null); // Ref para a div que você deseja medir
+
+
+    const cardRowsRef = useRef(null); // Ref para a div cardRows
 
     const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
         sessionStorage.setItem("profileid", btoa(profiles_id));
@@ -31,6 +44,9 @@ function Home() {
         navigate('/home');
     }
 
+    // Função para atualizar as dimensões da div
+
+
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -38,6 +54,7 @@ function Home() {
                 if (result) {
                     if (result.status === 1) {
                         setHomepageContent(result.response)
+                        updateDimensions();
                     }
                 }
             } catch (err) {
@@ -48,6 +65,13 @@ function Home() {
         };
 
         loadData(); // Chama a função de carregamento ao montar o componente
+
+        window.addEventListener('resize', updateDimensions);
+
+        // Limpeza do listener de resize ao desmontar o componente
+        return () => {
+            window.removeEventListener('resize', updateDimensions);
+        };
 
     }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
 
@@ -72,6 +96,7 @@ function Home() {
                         console.log("Escape key pressed on Page 1");
                     },
                     up: () => {
+
                         if (containerCount > 0) {
                             setContainerCount(prev => {
                                 const newCount = prev - 1;
@@ -81,25 +106,59 @@ function Home() {
                                 return newCount;
                             });
                         }
+
                     },
                     down: () => {
                         const focusedElement = document.activeElement;
-
                         if (containerCount < selectableContainers.length - 1) {
-                            if (focusedElement.classList.contains('cardButton')) {
-                                console.log("o meu focused", focusedElement)
-
-                                const index = Array.from(document.querySelectorAll('.cardButton')).indexOf(focusedElement);
-
-                                //console.log("Dados do perfil:", profiles.profiles[index]);
-                            }
+                            // Focar no próximo item primeiro
                             setContainerCount(prev => {
                                 const newCount = prev + 1;
-                                // Focar no próximo card (resetando cardCount se necessário)
-                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount]?.focus();
+                                const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
+
+                                // Foco no próximo item
+                                if (focusedCard) {
+                                    focusedCard.focus();
+                                    console.log('Focando no card');
+                                }
+
                                 return newCount;
                             });
+
+                            // Após o foco, rolar a div para o item focado
+                            setTimeout(() => {
+                                if (divRef.current) {
+                                    const focusedCard = selectableContainers[containerCount + 1]?.getElementsByClassName('selectedCard')[cardCount];
+                                    if (focusedCard) {
+                                        if(containerCount >= 0) {
+                                            focusedCard.scrollIntoView({
+                                                behavior: 'smooth', // Rolagem suave
+                                                block: 'center', // Tenta manter o item no centro da tela
+                                            });
+    
+                                            divRef.current.scrollBy({
+                                                top: 180,  // Rola para baixo 700px (ajuste conforme necessário)
+                                                behavior: 'smooth',  // Rolagem suave
+                                            });
+                                        }
+
+                                        console.log('Rolando para o item focado');
+                                    }
+                                }
+                            }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
                         }
+
+                        /*
+                                if (divRef.current) {
+                                divRef.current.scrollBy({
+                                    top: 100,  // Rola para baixo 700px (ajuste conforme necessário)
+                                    behavior: 'smooth',  // Rolagem suave
+                                });
+                                console.log('Rolando para baixo 700px');
+                            }
+                        */
+
+
                     },
                     left: () => {
                         if (cardCount > 0) {
@@ -139,22 +198,48 @@ function Home() {
         };
 
     }, [containerCount, cardCount, homepageContent]); // Dependência vazia para garantir que loadData só seja chamado uma vez
+    const updateDimensions = () => {
+        if (divRef.current) {
+            const rect = divRef.current.getBoundingClientRect(); // Pega o tamanho visível da div
+            const visibleWidth = rect.width;
+            const visibleHeight = rect.height;
+
+            // Pega o tamanho total do conteúdo, incluindo overflow
+            const totalWidth = divRef.current.scrollWidth;
+            const totalHeight = divRef.current.scrollHeight;
+
+            // Atualiza o estado com as novas dimensões
+            const newDimensions = {
+                visibleWidth,
+                visibleHeight,
+                totalWidth,
+                totalHeight,
+            };
+
+            // Atualiza o estado
+            setDivDimensions(newDimensions);
+
+            // Debug: exibe as dimensões no console
+            //console.log('Dimensões atualizadas da div:', newDimensions);
+        }
+    };
+
 
     const renderComponentByType = (item, idx) => {
         switch (item.type) {
             case "category selection":
                 return (
-                    RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent)
+                    RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent, model)
                 );
             case "most watched":
                 return (
-                    RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent)
+                    RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent, model)
                 );
             case "channels":
                 return (
                     RenderChannelsCards(item, idx, setFocusedContent, setHaveFocusedEvent)
                 );
-            case "playlist":
+            case "playlists":
                 switch (item.style) {
                     case "full_width_middle":
                         return (
@@ -172,8 +257,6 @@ function Home() {
     };
 
 
-
-
     return (
         <>
             {loading ? (
@@ -183,12 +266,39 @@ function Home() {
 
 
             ) : (
-                <div className="flex container flexColumn declaredOverflow">
+
+                /*
+                
+                <div className="teste" ref={cardRowsRef}>
+                    <button
+                        onClick={handleClick}
+                     style={{width: "200px", height: "100px", backgroundColor: "blue"}}>
+                        clique
+                    </button>
+
+                    <div className="teste1"> </div>
+                    <div className="teste2"> </div>
+                    <div className="teste3"> </div>
+                    <div className="teste1"> </div>
+                    <div className="teste2"> </div>
+                    <div className="teste3"> </div>
+                    <div className="teste1"> </div>
+                    <div className="teste2"> </div>
+                    <div className="teste3"> </div>
+                    <div className="teste1"> </div>
+                    <div className="teste2" > </div>
+                    <div className="teste3" > </div>
+                </div>
+                
+                */
+
+                <div className="flex container flexColumn declaredOverflow"
+                >
                     <Menu status={menuFocused} />
 
                     {haveFocusedEvent === true ?
                         <div className="focusedContent">
-                            {console.log("opa", focusedContent)}
+
                             <div className="focusedContentText" style={{ minHeight: focusedContent.name_image !== null ? "75%" : "50%" }}>
                                 {focusedContent.title !== null || focusedContent.name_image !== null ?
                                     focusedContent.name_image !== null ?
@@ -304,24 +414,51 @@ function Home() {
                         </div>
                         : ""}
 
-                    <div className="cardRows"
+
+                    <div
+                        className="teste"
+                        ref={divRef}
+
                         style={{
-                            maxHeight: haveFocusedEvent === true ? "560px" : "none",
-                            overflow: haveFocusedEvent === true ? "hidden" : "initial"
+                            maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
                         }}
                     >
-                        {console.log("minha home", homepageContent)
-                        }
                         {homepageContent.map((item, idx) => {
                             return renderComponentByType(item, idx)
                         })}
 
                         <div className="cardsFinalMarginScrollY"></div>
+
                     </div>
+
+
+                    {/*
+
+                <div
+                    className="cardRows"
+                    ref={cardRowsRef}
+                    style={{
+                        maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
+                    }}
+                >
+                    {homepageContent.map((item, idx) => {
+                        return renderComponentByType(item, idx)
+                    })}
+
+                    <div className="cardsFinalMarginScrollY"></div>
+                </div>
+                
+                
+                */}
+
 
 
 
                 </div>
+
+                /*
+                
+                */
             )
 
             }

@@ -2,6 +2,7 @@
     width: 100%;
     height: 340px;
     margin: 10px 0;
+    flex-shrink: 0;
 }
 
 .cardsTitle {
@@ -47,7 +48,7 @@ object-fit: cover;
 
 .cardsFinalMarginScrollX {
     width: 1500px;
-    height: 300px;
+    height: 100%;
     flex-shrink: 0;
 }
 
@@ -64,6 +65,7 @@ object-fit: cover;
     margin-left: 120px;
     border-radius: 20px;
     margin-top: 40px;
+    flex-shrink: 0;
 }
 
 .cardsContainerBgdImage {
@@ -100,4 +102,69 @@ object-fit: cover;
     width: 100%;
     border-radius: 5px;
     background-size: contain;
+}
+
+
+/* CSS PARA OS CARDS DE CHANNELS */
+
+.cardsChannelContainer {
+    width: 100%;
+    height: 130px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.cardsChannelContent {
+    width: 100%;
+    height: 120px;
+    overflow-y: hidden;
+    display: flex;
+    position: relative;
+}
+
+.cardsChannelContent::-webkit-scrollbar {
+    display: none;
+}
+
+.cardsChannelButton {
+    width: 200px;
+    height: 120px;
+    background-color: rgba(40, 40, 40, 0.7);
+    margin: 0 5px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    box-shadow: none;
+}
+
+.cardsChannelButton:nth-child(1) {
+    margin-left: 120px;
+}
+
+.cardsChannelButtonTextContainer {
+width: 100%;
+height: 100%;
+background-image: linear-gradient(to bottom, rgba(17, 16, 20, 0.01) 0%, rgba(17, 16, 20, 0.9) 60%);
+border-radius: 0 0 5px 5px;
+display: flex;
+align-items: flex-end;
+text-align: left;
+justify-content: center;
+}
+.cardsChannelButtonTextContainer h6{
+    margin: 0 0 10px 5px;
+
+}
+
+.displayNone {
+    width: 100%;
+height: 100%;
+    display: none;
+}
+
+
+/* Exibe o texto quando o botão estiver com foco */
+.cardsChannelButton:focus .displayNone {
+    display: block;
 }

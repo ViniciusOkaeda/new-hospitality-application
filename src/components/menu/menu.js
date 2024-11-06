@@ -41,7 +41,7 @@ export const Menu = (status) => {
         loadData(); // Chama a função de carregamento ao montar o componente
 
     }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
-    console.log("o status é ", status.status)
+    //console.log("o status é ", status.status)
 
     return(
         <div className="menuContainer">

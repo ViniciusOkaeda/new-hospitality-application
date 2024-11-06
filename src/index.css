@@ -1,7 +1,6 @@
 *{
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
 }
 
 @font-face {
@@ -23,8 +22,8 @@
 }
 
 body {
-  width: 1920px;
-  height: auto;
+  width: 100vw;
+  min-height: 100vh;
   background-color: rgb(17, 16, 20);
   margin: 0;
   padding: 0;
@@ -43,7 +42,7 @@ body::-webkit-scrollbar {
   margin: 0;
   padding: 0;
   height: auto;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .declaredHeight {
@@ -51,7 +50,7 @@ body::-webkit-scrollbar {
 }
 
 .declaredOverflow {
-  overflow: hidden;
+  overflow: visible;
 }
 
 .declaredOverflowActive {
@@ -59,7 +58,7 @@ body::-webkit-scrollbar {
 
 .flexColumn {
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
 
 }
 

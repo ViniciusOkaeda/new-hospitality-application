@@ -109,6 +109,8 @@
 .cardRows {
     width: 100%;
     height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .cardsFinalMarginScrollY {
@@ -116,6 +118,34 @@
     height: 700px;
     flex-shrink: 0;
 }
+
+.teste {
+    width: 100%;
+    height: auto;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.teste1 {
+    width: 100%;
+    height: 400px;
+    background-color: rgb(255, 166, 0);
+    margin: 20px 0;
+}
+.teste2 {
+    width: 100%;
+    height: 400px;
+    background-color: rgb(204, 0, 255);
+    margin: 20px 0;
+}
+.teste3 {
+    width: 100%;
+    height: 400px;
+    background-color: rgb(51, 0, 255);
+    margin: 20px 0;
+}
+.teste4 {}
 
 
 
