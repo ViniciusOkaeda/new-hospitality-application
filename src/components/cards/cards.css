@@ -1,0 +1,103 @@
+.cardsContainer {
+    width: 100%;
+    height: 340px;
+    margin: 10px 0;
+}
+
+.cardsTitle {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+}
+
+.cardsContent {
+    width: 100%;
+    height: 300px;
+    overflow-y: hidden;
+    display: flex;
+    position: relative;
+}
+
+
+.cardsContent::-webkit-scrollbar {
+    display: none;
+}
+
+.cardButton{
+    width: 200px;
+    height: 270px;
+    flex-shrink: 0;
+    margin: 15px 5px 0 5px;
+    background-color: rgba(0, 0, 0, 0);
+    box-shadow: none;
+}
+
+.cardButton:nth-child(1) {
+    margin-left: 120px;
+}
+
+
+.cardImage{
+width: 100%;
+height: 100%;
+border-radius: 5px;
+object-fit: cover;
+}
+
+.cardsFinalMarginScrollX {
+    width: 1500px;
+    height: 300px;
+    flex-shrink: 0;
+}
+
+
+
+
+
+/* CSS PARA CARDS COM BACKGROUND */
+
+.cardsContainerWithBackground {
+    width: 1760px;
+    height: 450px;
+    display: flex;
+    margin-left: 120px;
+    border-radius: 20px;
+    margin-top: 40px;
+}
+
+.cardsContainerBgdImage {
+    width: 50%;
+    height: 100%;
+}
+
+.cardsContainerRow {
+    width: auto;
+    height: 100%;
+    background-color: rgb(40, 40, 40);
+    display: flex;
+    align-items: center;
+    overflow: auto;
+    border-radius: 0 20px 20px 0;
+}
+
+.cardsContainerRow::-webkit-scrollbar {
+    display: none;
+}
+
+
+.cardRowButton {
+    width: 200px;
+    height: 260px;
+    margin: auto 5px;
+    flex-shrink: 0;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+
+.cardRowButtonImage {
+    height: 100%;
+    width: 100%;
+    border-radius: 5px;
+    background-size: contain;
+}

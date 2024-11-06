@@ -51,6 +51,7 @@ function Profile() {
             if (!loading) { // Apenas permite navegação se não estiver carregando
                 handleKeyDown(event, {
                     enter: () => {
+
                         const focusedElement = document.activeElement;
                         if (focusedElement.classList.contains('profileButton')) {
                             const index = Array.from(document.querySelectorAll('.profileButton')).indexOf(focusedElement);
@@ -69,6 +70,7 @@ function Profile() {
                         console.log("Escape key pressed on Page 1");
                     },
                     up: () => {
+
                         if (containerCount > 0) {
                             setContainerCount(prev => {
                                 const newCount = prev - 1;
@@ -80,6 +82,7 @@ function Profile() {
                         }
                     },
                     down: () => {
+
                         if (containerCount < selectableContainers.length - 1) {
                             setContainerCount(prev => {
                                 const newCount = prev + 1;
@@ -90,6 +93,7 @@ function Profile() {
                         }
                     },
                     left: () => {
+
                         if(containerCount === 0 ) {
                             if(cardCount > 0) {
                                 setCardCount(prev => {
@@ -101,6 +105,7 @@ function Profile() {
                         }
                     },
                     right: () => {
+                        
                         if(containerCount === 0 ) {
                             if(cardCount < selectableContainers[0]?.getElementsByClassName('selectedCard').length -1) {
                                 setCardCount(prev => {

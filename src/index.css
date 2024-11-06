@@ -1,7 +1,7 @@
 *{
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  scroll-behavior: smooth;
 }
 
 @font-face {
@@ -34,6 +34,10 @@ body {
   overflow-x: hidden;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
 .container {
   width: 1920px;
   margin: 0;
@@ -61,6 +65,10 @@ body {
 
 .paddingLeftDefault {
   padding-left: 120px; /* criar classe independente*/
+}
+
+.marginLeftDefault {
+  margin-left: 120px; /* criar classe independente*/
 }
 
 h1 {
