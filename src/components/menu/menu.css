@@ -56,15 +56,16 @@ margin-bottom: 100px;
     height: 50px;
     background-color: #333;
     border-radius: 100%;
-    margin: 0 0 0 auto;
+    margin: 0 0 100px auto;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .iconButtonImgProfile {
-    width: 50px;
-    height: 50px;
+    width: 45px;
+    height: 45px;
+    border-radius: 100%;
 }
 
 .iconButtonImg {

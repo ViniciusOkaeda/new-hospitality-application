@@ -25,6 +25,8 @@ function Home() {
 
 
     const [menuFocused, setMenuFocused] = useState(false);
+    const [menuCount, setMenuCount] = useState(0)
+    const [selectableMenu, setSelectableMenu] = useState([])
 
     const [divDimensions, setDivDimensions] = useState({
         visibleWidth: 0,
@@ -77,7 +79,9 @@ function Home() {
 
     useEffect(() => {
         const selectableContainer = document.querySelectorAll('.selectedContainer');
+        const selectableMenu = document.querySelectorAll('.selectedMenuContainer')
         setSelectableContainers(selectableContainer);
+        setSelectableMenu(selectableMenu);
         // Configuração do keyDownHandler
         const keyDownHandler = (event) => {
             if (!loading) { // Apenas permite navegação se não estiver carregando
@@ -144,74 +148,117 @@ function Home() {
 
                     },
                     down: () => {
-                        const focusedElement = document.activeElement;
-                        if (containerCount < selectableContainers.length - 1) {
-                            // Focar no próximo item primeiro
-                            setContainerCount(prev => {
-                                const newCount = prev + 1;
-                                const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
-                                setCardCount(0)
-                                // Foco no próximo item
-                                if (focusedCard) {
-                                    focusedCard.focus();
-                                }
+                        console.log("opa", menuCount)
 
-                                return newCount;
-                            });
+                        if(menuFocused === true) {
+                            console.log("opa 2", menuCount)
+                            if(menuCount < selectableMenu[0]?.getElementsByClassName('selectedMenuOption').length){
+                                setMenuCount(prev => {
+                                    const newMenuOptionCount = prev + 1;
+                                    const focusedCard = selectableMenu[0]?.getElementsByClassName('selectedMenuOption')[newMenuOptionCount]
+                                    if(focusedCard) {
+                                        focusedCard.focus();
+                                    }
 
-                            setTimeout(() => {
-                                if (divRef.current) {
-                                    const focusedCard = selectableContainers[containerCount + 1]?.getElementsByClassName('selectedCard')[cardCount];
-                                    
-                                    const lastElement = selectableContainers[containerCount + 1]?.getAttribute('id')
-
+                                    return newMenuOptionCount
+                                })
+                            }
+                        } else {
+                            if (containerCount < selectableContainers.length) {
+                                // Focar no próximo item primeiro
+                                setContainerCount(prev => {
+                                    console.log("o prev", prev)
+                                    const newCount = prev + 1;
+                                    console.log("o new", newCount)
+                                    const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
+                                    setCardCount(0)
+                                    // Foco no próximo item
                                     if (focusedCard) {
-                                        const elementRect = focusedCard.getBoundingClientRect();
+                                        focusedCard.focus();
+                                    }
+    
+                                    return newCount;
+                                });
+    
+                                console.log("meu container no down", containerCount)
+                                console.log("meu card no down", cardCount)
+    
+                                setTimeout(() => {
+                                    if (divRef.current) {
+                                        const focusedCard = selectableContainers[containerCount + 1]?.getElementsByClassName('selectedCard')[cardCount];
                                         
-                                        // Distância do topo da div até o topo do elemento focado no conteúdo total
-                                        const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
-                    
-                                        if(containerCount == -1) {
-                                            //quando for o primeiro elemento da página irá vir pra cá
-
-                                        }
-                                        if(containerCount >= 0) { 
-                                            if(lastElement === "bottom") {
-                                                divRef.current.scrollTo({
-                                                    top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
-                                                    behavior: 'smooth',  // Rolagem suave
-                                                });
+                                        const lastElement = selectableContainers[containerCount + 1]?.getAttribute('id')
+    
+                                        if (focusedCard) {
+                                            const elementRect = focusedCard.getBoundingClientRect();
+                                            
+                                            // Distância do topo da div até o topo do elemento focado no conteúdo total
+                                            const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
+                        
+                                            if(containerCount == -1) {
+                                                //quando for o primeiro elemento da página irá vir pra cá
+    
                                             }
-
+                                            if(containerCount >= 0) { 
+                                                if(lastElement === "bottom") {
+                                                    divRef.current.scrollTo({
+                                                        top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                                                        behavior: 'smooth',  // Rolagem suave
+                                                    });
+                                                }
+    
+                                            }
                                         }
                                     }
-                                }
-                            }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
-                        
-                        
-                        
+                                }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
+                            
+                            
+                            
+                            }
                         }
 
                     },
                     left: () => {
-                        if (cardCount > 0) {
+                        if(cardCount >= 0) {
                             setCardCount(prev => {
                                 const newCardCount = prev - 1;
-                                selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
+                                console.log("o card no left", newCardCount)
+                                if(newCardCount > -1) {
+                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
+
+                                }
+                                if(newCardCount === -1) {
+                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[0]?.blur()
+                                    setMenuFocused(true)
+                                    console.log("o menu option", menuCount)
+                                    selectableMenu[0]?.getElementsByClassName('selectedMenuOption')[menuCount]?.focus()
+                                }
                                 return newCardCount;
                             })
+
                         }
                     },
                     right: () => {
-                        if (cardCount < selectableContainers[containerCount]?.getElementsByClassName('selectedCard').length - 1) {
-                            setCardCount(prev => {
-                                const newCardCount = prev + 1;
-                                selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
-                                return newCardCount;
-                            })
-                            //terminar aqui
-                            //console.log("VEJAMOS", )
+                        if(cardCount >= -1) {
+                            if (cardCount < selectableContainers[containerCount]?.getElementsByClassName('selectedCard').length - 1) {
+                                setCardCount(prev => {
+                                    if(cardCount === -1) {
+                                        //aqui o blur pro menu
+                                        //selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[0]?.focus()
+                                        setMenuFocused(false)
+                                        selectableMenu[0]?.getElementsByClassName('selectedMenuOption')[menuCount]?.focus()
+                                    }
+                                    const newCardCount = prev + 1;
+                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
+                                    return newCardCount;
+                                })
+                                //terminar aqui
+                                //console.log("VEJAMOS", )
+                            }
+                            
+
                         }
+
                         //console.log("Right key pressed on Page 1", selectableContainers[0]?.getElementsByClassName('selectedCard'));
                     },
                     home: () => {
@@ -230,7 +277,7 @@ function Home() {
             document.removeEventListener("keydown", keyDownHandler);
         };
 
-    }, [containerCount, cardCount, homepageContent]); // Dependência vazia para garantir que loadData só seja chamado uma vez
+    }, [containerCount, cardCount, homepageContent, menuCount, menuFocused]); // Dependência vazia para garantir que loadData só seja chamado uma vez
     const updateDimensions = () => {
         if (divRef.current) {
             const rect = divRef.current.getBoundingClientRect(); // Pega o tamanho visível da div
@@ -440,25 +487,6 @@ function Home() {
 
                     </div>
 
-
-                    {/*
-
-                <div
-                    className="cardRows"
-                    ref={cardRowsRef}
-                    style={{
-                        maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
-                    }}
-                >
-                    {homepageContent.map((item, idx) => {
-                        return renderComponentByType(item, idx)
-                    })}
-
-                    <div className="cardsFinalMarginScrollY"></div>
-                </div>
-        
-                
-                */}
 
                 </div>
 

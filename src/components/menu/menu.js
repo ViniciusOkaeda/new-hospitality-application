@@ -51,47 +51,45 @@ export const Menu = (status) => {
                 backgroundColor: status.status === true ? "rgba(17, 16, 20, 0.95)" : "none",
                 backgroundImage: status.status === true ? "none" : "linear-gradient(to left, rgba(17, 16, 20, 0) 0%, rgba(17, 16, 20, 0.3) 10%, rgba(17, 16, 20, 0.5) 20%, rgba(17, 16, 20, 0.7) 30%, rgba(17, 16, 20, 0.8) 40%)"
             }}>
-                <div className="menuIconButtons">
-                    <div className="menuProfileButton">
+                <div className="menuIconButtons ">
+
+                    <div className="menuOptionsButton selectedMenuContainer">
                         {status.status === true ? 
-                        <button className="iconButtonProfile">
+                        <button className="iconButtonProfile selectedMenuOption">
                             <img src={profile.image} className="iconButtonImgProfile"></img>
 
                         </button>
                         
                         : ""}
-                    </div>
-
-                    <div className="menuOptionsButton">
-                        <button className="iconButton1">
-                            <img src={SearchIcon} className="iconButtonImg1"></img>
+                        <button className="iconButton selectedMenuOption">
+                            <img src={SearchIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={HomeIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={ChannelIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={GuideIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={VodIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={SavedIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={CatchupIcon} className="iconButtonImg"></img>
                         </button>
 
                         {status.status === true ? 
                         
                         <>
-                        <button className="iconButton menuMarginTop">
+                        <button className="iconButton menuMarginTop selectedMenuOption">
                             <img src={ConfigIcon} className="iconButtonImg"></img>
                         </button>
-                        <button className="iconButton">
+                        <button className="iconButton selectedMenuOption">
                             <img src={LogoutIcon} className="iconButtonImg"></img>
                         </button>
                         </>

@@ -82,14 +82,17 @@ function Profile() {
                         }
                     },
                     down: () => {
-
-                        if (containerCount < selectableContainers.length - 1) {
+                        console.log("opa")
+                        console.log("o containercount", containerCount)
+                        console.log("o selectableContainers", selectableContainers.length - 1)
+                        if (containerCount < selectableContainers.length) {
+                            console.log("opa 2")
                             setContainerCount(prev => {
                                 const newCount = prev + 1;
                                 // Focar no próximo card (resetando cardCount se necessário)
                                 selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
                                 return newCount;
-                                
+
                             });
                         }
                     },
