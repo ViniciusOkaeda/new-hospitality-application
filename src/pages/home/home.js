@@ -97,14 +97,49 @@ function Home() {
                     },
                     up: () => {
 
-                        if (containerCount > 0) {
+                        if (containerCount >= 0) {
                             setContainerCount(prev => {
                                 const newCount = prev - 1;
+                                const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
                                 setCardCount(0)
                                 // Focar no card anterior
-                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount]?.focus();
+                                if (focusedCard) {
+                                    focusedCard.focus();
+                                }                                
                                 return newCount;
                             });
+
+                            setTimeout(() => {
+                                if (divRef.current) {
+                                    const focusedCard = selectableContainers[containerCount - 1]?.getElementsByClassName('selectedCard')[cardCount];
+                                    
+                                    const lastElement = selectableContainers[containerCount - 1]?.getAttribute('id')
+
+                                    if (focusedCard) {
+                                        const elementRect = focusedCard.getBoundingClientRect();
+                                        
+                                        // Distância do topo da div até o topo do elemento focado no conteúdo total
+                                        const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
+                    
+                                        if(containerCount == -1) {
+                                            //quando for o primeiro elemento da página irá vir pra cá
+
+                                        }
+                                        if(containerCount >= 0) { 
+                                            if(lastElement === "bottom") {
+                                                divRef.current.scrollTo({
+                                                    top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                                                    behavior: 'smooth',  // Rolagem suave
+                                                });
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
+                        
+
+                            
                         }
 
                     },
@@ -115,49 +150,47 @@ function Home() {
                             setContainerCount(prev => {
                                 const newCount = prev + 1;
                                 const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
-
+                                setCardCount(0)
                                 // Foco no próximo item
                                 if (focusedCard) {
                                     focusedCard.focus();
-                                    console.log('Focando no card');
                                 }
 
                                 return newCount;
                             });
 
-                            // Após o foco, rolar a div para o item focado
                             setTimeout(() => {
                                 if (divRef.current) {
                                     const focusedCard = selectableContainers[containerCount + 1]?.getElementsByClassName('selectedCard')[cardCount];
-                                    if (focusedCard) {
-                                        if(containerCount >= 0) {
-                                            focusedCard.scrollIntoView({
-                                                behavior: 'smooth', // Rolagem suave
-                                                block: 'center', // Tenta manter o item no centro da tela
-                                            });
-    
-                                            divRef.current.scrollBy({
-                                                top: 180,  // Rola para baixo 700px (ajuste conforme necessário)
-                                                behavior: 'smooth',  // Rolagem suave
-                                            });
-                                        }
+                                    
+                                    const lastElement = selectableContainers[containerCount + 1]?.getAttribute('id')
 
-                                        console.log('Rolando para o item focado');
+                                    if (focusedCard) {
+                                        const elementRect = focusedCard.getBoundingClientRect();
+                                        
+                                        // Distância do topo da div até o topo do elemento focado no conteúdo total
+                                        const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
+                    
+                                        if(containerCount == -1) {
+                                            //quando for o primeiro elemento da página irá vir pra cá
+
+                                        }
+                                        if(containerCount >= 0) { 
+                                            if(lastElement === "bottom") {
+                                                divRef.current.scrollTo({
+                                                    top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                                                    behavior: 'smooth',  // Rolagem suave
+                                                });
+                                            }
+
+                                        }
                                     }
                                 }
                             }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
+                        
+                        
+                        
                         }
-
-                        /*
-                                if (divRef.current) {
-                                divRef.current.scrollBy({
-                                    top: 100,  // Rola para baixo 700px (ajuste conforme necessário)
-                                    behavior: 'smooth',  // Rolagem suave
-                                });
-                                console.log('Rolando para baixo 700px');
-                            }
-                        */
-
 
                     },
                     left: () => {
@@ -239,7 +272,7 @@ function Home() {
                 return (
                     RenderChannelsCards(item, idx, setFocusedContent, setHaveFocusedEvent)
                 );
-            case "playlists":
+            case "playlist":
                 switch (item.style) {
                     case "full_width_middle":
                         return (
@@ -247,7 +280,7 @@ function Home() {
                         );
                     case "normal":
                         return (
-                            RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent)
+                            RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent, model)
                         );
 
                 }
@@ -266,31 +299,6 @@ function Home() {
 
 
             ) : (
-
-                /*
-                
-                <div className="teste" ref={cardRowsRef}>
-                    <button
-                        onClick={handleClick}
-                     style={{width: "200px", height: "100px", backgroundColor: "blue"}}>
-                        clique
-                    </button>
-
-                    <div className="teste1"> </div>
-                    <div className="teste2"> </div>
-                    <div className="teste3"> </div>
-                    <div className="teste1"> </div>
-                    <div className="teste2"> </div>
-                    <div className="teste3"> </div>
-                    <div className="teste1"> </div>
-                    <div className="teste2"> </div>
-                    <div className="teste3"> </div>
-                    <div className="teste1"> </div>
-                    <div className="teste2" > </div>
-                    <div className="teste3" > </div>
-                </div>
-                
-                */
 
                 <div className="flex container flexColumn declaredOverflow"
                 >
@@ -416,13 +424,14 @@ function Home() {
 
 
                     <div
-                        className="teste"
+                        className="cardRows"
                         ref={divRef}
 
                         style={{
                             maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
                         }}
                     >
+
                         {homepageContent.map((item, idx) => {
                             return renderComponentByType(item, idx)
                         })}
@@ -447,18 +456,12 @@ function Home() {
 
                     <div className="cardsFinalMarginScrollY"></div>
                 </div>
-                
+        
                 
                 */}
 
-
-
-
                 </div>
 
-                /*
-                
-                */
             )
 
             }

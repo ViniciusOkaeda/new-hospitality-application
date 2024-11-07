@@ -89,6 +89,7 @@ function Profile() {
                                 // Focar no próximo card (resetando cardCount se necessário)
                                 selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
                                 return newCount;
+                                
                             });
                         }
                     },

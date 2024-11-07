@@ -1,20 +1,19 @@
 import React from "react";
 import './cards.css'
 
-export const RenderCards = (item, idx, setFocusedContent, setHaveFocusedEvent, model) => {
+export const RenderCards = (item, index, setFocusedContent, setHaveFocusedEvent, model) => {
 
     return (
-        <div key={idx} className="cardsContainer ">
+        <div key={index} className="cardsContainer ">
         <div className="cardsTitle paddingLeftDefault">
             <h3>{item.title}</h3>
         </div>
 
         <div id="bottom" className="cardsContent selectedContainer">
             {item.data.map((rows, idx) => {
-
                 return(
                     <button 
-                    key={idx} 
+                    key={idx}
                     className="cardButton selectedCard"
                     onFocus={(() => {
                         if(model === 1) {
@@ -71,7 +70,7 @@ export const RenderChannelsCards = (item, idx, setFocusedContent, setHaveFocused
     return(
         <div key={idx} className="cardsChannelContainer">
 
-            <div id="middle" className="cardsChannelContent selectedContainer">
+            <div id="channel" className="cardsChannelContent selectedContainer">
                 {item.data.map((item, idx) => {
                     return(
                         <button key={idx} className="cardsChannelButton selectedCard" 
