@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, forwardRef, useRef, useImperativeHandle } from "react";
 import { LoginMotvWithToken } from "../../services/calls";
 import './menu.css';
 
@@ -14,12 +14,26 @@ import LogoutIcon from '../../images/logout.png'
 
 import { useNavigate } from "react-router-dom";
 
-export const Menu = (status) => {
+export const Menu = forwardRef(({ status }, ref) => {
 
     const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const navigate = useNavigate()
+
+    const buttonsRef = useRef([]); // Armazenando as refs dos botões, como um array.
+    useImperativeHandle(ref, () => ({
+        focusButton(index) {
+            if (buttonsRef.current[index]) {
+                buttonsRef.current[index].focus(); // Focar no botão com o índice fornecido
+            }
+        },
+        blurButton(index) {
+            if (buttonsRef.current[index]) {
+                buttonsRef.current[index].blur(); // Desfocar o botão com o índice fornecido
+            }
+        }
+    }));
 
 
     useEffect(() => {
@@ -27,7 +41,7 @@ export const Menu = (status) => {
             try {
                 const result = await LoginMotvWithToken();
                 if (result) {
-                    if(result.status === 1) {
+                    if (result.status === 1) {
                         setProfile(result.response.profiles[0])
                     }
                 }
@@ -43,107 +57,91 @@ export const Menu = (status) => {
     }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
     //console.log("o status é ", status.status)
 
-    return(
+    const buttonData = [
+        { icon: SearchIcon, alt: "Pesquisar" },
+        { icon: HomeIcon, alt: "Inicio" },
+        { icon: ChannelIcon, alt: "Canais" },
+        { icon: GuideIcon, alt: "Programação" },
+        { icon: VodIcon, alt: "VOD" },
+        { icon: SavedIcon, alt: "Salvos" },
+        { icon: CatchupIcon, alt: "Arquivo de TV" },
+        { icon: ConfigIcon, alt: "Configurações" },
+        { icon: LogoutIcon, alt: "Sair" },
+    ];
+
+    return (
         <div className="menuContainer">
 
-            <div className="menuLeftContainer" style={{
-                
-                backgroundColor: status.status === true ? "rgba(17, 16, 20, 0.95)" : "none",
-                backgroundImage: status.status === true ? "none" : "linear-gradient(to left, rgba(17, 16, 20, 0) 0%, rgba(17, 16, 20, 0.3) 10%, rgba(17, 16, 20, 0.5) 20%, rgba(17, 16, 20, 0.7) 30%, rgba(17, 16, 20, 0.8) 40%)"
-            }}>
-                <div className="menuIconButtons ">
-
-                    <div className="menuOptionsButton selectedMenuContainer">
-                        {status.status === true ? 
-                        <button className="iconButtonProfile selectedMenuOption">
-                            <img src={profile.image} className="iconButtonImgProfile"></img>
-
+            <div
+                className="menuLeftContainer"
+                style={{
+                    backgroundColor: status === true ? "rgba(17, 16, 20, 0.95)" : "none",
+                    backgroundImage: status === true ? "none" : "linear-gradient(to left, rgba(17, 16, 20, 0) 0%, rgba(17, 16, 20, 0.3) 10%, rgba(17, 16, 20, 0.5) 20%, rgba(17, 16, 20, 0.7) 30%, rgba(17, 16, 20, 0.8) 40%)"
+                }}
+                ref={ref} // Passando a ref para o container
+            >
+                <div className="menuIconButtons">
+                    {/* Mapeando os botões e atribuindo a ref a cada um */}
+                    {buttonData.map((button, index) => (
+                        <button
+                            key={index}
+                            className="iconButton selectedMenuOption"
+                            ref={(el) => buttonsRef.current[index] = el} // Atribuindo a ref ao botão
+                        >
+                            <img src={button.icon} alt={button.alt} className="iconButtonImg" />
                         </button>
-                        
-                        : ""}
-                        <button className="iconButton selectedMenuOption">
-                            <img src={SearchIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={HomeIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={ChannelIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={GuideIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={VodIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={SavedIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={CatchupIcon} className="iconButtonImg"></img>
-                        </button>
-
-                        {status.status === true ? 
-                        
-                        <>
-                        <button className="iconButton menuMarginTop selectedMenuOption">
-                            <img src={ConfigIcon} className="iconButtonImg"></img>
-                        </button>
-                        <button className="iconButton selectedMenuOption">
-                            <img src={LogoutIcon} className="iconButtonImg"></img>
-                        </button>
-                        </>
-                        :""}
-
-
-                    </div>
+                    ))}
                 </div>
             </div>
 
-            {status.status === true ? 
-            <div className="menuRightContainer">
-                <div className="menuIconTexts">
-                    <div className="menuProfileText">
-                        <h4>{profile.profiles_name}</h4>
-                        <h6>Trocar Perfil</h6>
+
+
+
+
+            {status.status === true ?
+                <div className="menuRightContainer">
+                    <div className="menuIconTexts">
+                        <div className="menuProfileText">
+                            <h4>{profile.profiles_name}</h4>
+                            <h6>Trocar Perfil</h6>
+                        </div>
+
+                        <div className="menuOptionsButton">
+
+                            <div className="menuText">
+                                <h4>Pesquisar</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>Inicio</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>Canais</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>Programação</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>VOD</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>Salvos</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>Arquivo de TV</h4>
+                            </div>
+                            <div className="menuText menuMarginTop">
+                                <h4>Configurações</h4>
+                            </div>
+                            <div className="menuText">
+                                <h4>Sair do aplicativo</h4>
+                            </div>
+                        </div>
+
                     </div>
-
-                    <div className="menuOptionsButton">
-
-                        <div className="menuText">
-                            <h4>Pesquisar</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>Inicio</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>Canais</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>Programação</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>VOD</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>Salvos</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>Arquivo de TV</h4>
-                        </div>
-                        <div className="menuText menuMarginTop">
-                            <h4>Configurações</h4>
-                        </div>
-                        <div className="menuText">
-                            <h4>Sair do aplicativo</h4>
-                        </div>
-                    </div>
-
                 </div>
-            </div>
-            
-            : ""}
+
+                : ""}
 
         </div>
     )
-}
+});

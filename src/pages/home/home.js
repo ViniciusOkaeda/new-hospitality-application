@@ -6,13 +6,15 @@ import { useNavigate } from "react-router-dom";
 import { GetHomepageV2 } from "../../services/calls";
 import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating } from "../../utils/constants";
 import { Menu } from "../../components/menu/menu";
+import { useKeyNavigation } from "../../utils/newNavigation";
 import { RenderCards, RenderCardsWithBackground, RenderChannelsCards } from "../../components/cards/cards";
 
 
 function Home() {
-    const [containerCount, setContainerCount] = useState(-1); // Começa em 0 para o primeiro elemento
-    const [cardCount, setCardCount] = useState(0); // Começa em 0 para o primeiro elemento
-    const [selectableContainers, setSelectableContainers] = useState([]);
+
+
+
+
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const [homepageContent, setHomepageContent] = useState([]);
@@ -24,10 +26,6 @@ function Home() {
     const model = 1 //auxiliar para nao precisar focar e exibir cards
 
 
-    const [menuFocused, setMenuFocused] = useState(false);
-    const [menuCount, setMenuCount] = useState(0)
-    const [selectableMenu, setSelectableMenu] = useState([])
-
     const [divDimensions, setDivDimensions] = useState({
         visibleWidth: 0,
         visibleHeight: 0,
@@ -36,8 +34,6 @@ function Home() {
     });
     const divRef = useRef(null); // Ref para a div que você deseja medir
 
-
-    const cardRowsRef = useRef(null); // Ref para a div cardRows
 
     const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
         sessionStorage.setItem("profileid", btoa(profiles_id));
@@ -77,207 +73,221 @@ function Home() {
 
     }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
 
-    useEffect(() => {
-        const selectableContainer = document.querySelectorAll('.selectedContainer');
-        const selectableMenu = document.querySelectorAll('.selectedMenuContainer')
-        setSelectableContainers(selectableContainer);
-        setSelectableMenu(selectableMenu);
-        // Configuração do keyDownHandler
-        const keyDownHandler = (event) => {
-            if (!loading) { // Apenas permite navegação se não estiver carregando
-                handleKeyDown(event, {
-                    enter: () => {
-                        const focusedElement = document.activeElement;
-                        if (focusedElement.classList.contains('profileButton')) {
-                            const index = Array.from(document.querySelectorAll('.profileButton')).indexOf(focusedElement);
 
-                            //console.log("Dados do perfil:", profiles.profiles[index]);
-                        } else if (focusedElement.id === "logoutButton") {
-                            //Logout(navigate)
-                        }
-                    },
-                    escape: () => {
-                        console.log("Escape key pressed on Page 1");
-                    },
-                    up: () => {
+    const [selectableContainers, setSelectableContainers] = useState([]);
+    const [menuFocused, setMenuFocused] = useState(false);
+    const [selectableMenus, setSelectableMenu] = useState([])
+    const menuRef = useRef(null)
 
-                        if (containerCount >= 0) {
-                            setContainerCount(prev => {
-                                const newCount = prev - 1;
-                                const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
-                                setCardCount(0)
-                                // Focar no card anterior
-                                if (focusedCard) {
-                                    focusedCard.focus();
-                                }                                
-                                return newCount;
-                            });
+    const categoryRefs = useRef(homepageContent.map(() => React.createRef())); // Refs para categorias
+    const itemRefs = useRef([]); // Refs para os itens dentro de cada categoria
+    const buttonRefs = useRef([]);  // Vai armazenar as referências dos botões
+    const [focusedIndex, setFocusedIndex] = useState([0, 0]); 
 
-                            setTimeout(() => {
-                                if (divRef.current) {
-                                    const focusedCard = selectableContainers[containerCount - 1]?.getElementsByClassName('selectedCard')[cardCount];
-                                    
-                                    const lastElement = selectableContainers[containerCount - 1]?.getAttribute('id')
+  // Funções de navegação
+const handleArrowDown = () => {
+    console.log("Seta para baixo pressionada");
 
-                                    if (focusedCard) {
-                                        const elementRect = focusedCard.getBoundingClientRect();
-                                        
-                                        // Distância do topo da div até o topo do elemento focado no conteúdo total
-                                        const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
+    if (menuFocused) {
+      // Se o menu estiver focado, navega pelos itens do menu
+      const nextCount = menuCount + 1;
+      if (menuRef.current && nextCount <= 8) {
+        setMenuCount(nextCount); // Atualiza containerCount
+        menuRef.current.focusButton(nextCount); // Foca o próximo item
+      }
+    } else {
+        // Se houver um próximo item
+        let nextItemIndex = containerCount + 1;
+        if (homepageContent[nextItemIndex]) {
+          // Se o próximo item existir, move o foco para o próximo item
+          setContainerCount(nextItemIndex);
+          // Tenta manter o foco no mesmo índice de cartão dentro do item
+          if (buttonRefs.current[nextItemIndex] && buttonRefs.current[nextItemIndex][cardCount]) {
+            buttonRefs.current[nextItemIndex][cardCount].focus();
+          } else {
+            // Se o próximo item não tiver o mesmo número de cartões, foca no primeiro cartão
+            setCardCount(0);
+            buttonRefs.current[nextItemIndex] && buttonRefs.current[nextItemIndex][0].focus();
+          }
+
+          setTimeout(() => {
+            if (divRef.current) {
+                const refButtonFocused = buttonRefs.current[containerCount + 1][cardCount]
+                //const focusedCard = selectableContainers[containerCount + 1]?.getElementsByClassName('selectedCard')[cardCount];
+                console.log("o focused", refButtonFocused)
+                
+                
+                if (refButtonFocused) {
+                    //const lastElement = buttonRefs.current[containerCount + 1].getAttribute('id')
+                    const elementRect = refButtonFocused.getBoundingClientRect();
                     
-                                        if(containerCount == -1) {
-                                            //quando for o primeiro elemento da página irá vir pra cá
+                    // Distância do topo da div até o topo do elemento focado no conteúdo total
+                    const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
 
-                                        }
-                                        if(containerCount >= 0) { 
-                                            if(lastElement === "bottom") {
-                                                divRef.current.scrollTo({
-                                                    top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
-                                                    behavior: 'smooth',  // Rolagem suave
-                                                });
-                                            }
+                    if(containerCount == -1) {
+                        //quando for o primeiro elemento da página irá vir pra cá
 
-                                        }
-                                    }
-                                }
-                            }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
-                        
+                    }
+                    if(containerCount >= 0) { 
+                        divRef.current.scrollTo({
+                            top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                            behavior: 'smooth',  // Rolagem suave
+                        });
 
-                            
-                        }
-
-                    },
-                    down: () => {
-                        console.log("opa", menuCount)
-
-                        if(menuFocused === true) {
-                            console.log("opa 2", menuCount)
-                            if(menuCount < selectableMenu[0]?.getElementsByClassName('selectedMenuOption').length){
-                                setMenuCount(prev => {
-                                    const newMenuOptionCount = prev + 1;
-                                    const focusedCard = selectableMenu[0]?.getElementsByClassName('selectedMenuOption')[newMenuOptionCount]
-                                    if(focusedCard) {
-                                        focusedCard.focus();
-                                    }
-
-                                    return newMenuOptionCount
-                                })
-                            }
-                        } else {
-                            if (containerCount < selectableContainers.length) {
-                                // Focar no próximo item primeiro
-                                setContainerCount(prev => {
-                                    console.log("o prev", prev)
-                                    const newCount = prev + 1;
-                                    console.log("o new", newCount)
-                                    const focusedCard = selectableContainers[newCount]?.getElementsByClassName('selectedCard')[cardCount];
-                                    setCardCount(0)
-                                    // Foco no próximo item
-                                    if (focusedCard) {
-                                        focusedCard.focus();
-                                    }
-    
-                                    return newCount;
-                                });
-    
-                                console.log("meu container no down", containerCount)
-                                console.log("meu card no down", cardCount)
-    
-                                setTimeout(() => {
-                                    if (divRef.current) {
-                                        const focusedCard = selectableContainers[containerCount + 1]?.getElementsByClassName('selectedCard')[cardCount];
-                                        
-                                        const lastElement = selectableContainers[containerCount + 1]?.getAttribute('id')
-    
-                                        if (focusedCard) {
-                                            const elementRect = focusedCard.getBoundingClientRect();
-                                            
-                                            // Distância do topo da div até o topo do elemento focado no conteúdo total
-                                            const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
-                        
-                                            if(containerCount == -1) {
-                                                //quando for o primeiro elemento da página irá vir pra cá
-    
-                                            }
-                                            if(containerCount >= 0) { 
-                                                if(lastElement === "bottom") {
-                                                    divRef.current.scrollTo({
-                                                        top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
-                                                        behavior: 'smooth',  // Rolagem suave
-                                                    });
-                                                }
-    
-                                            }
-                                        }
-                                    }
-                                }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
-                            
-                            
-                            
-                            }
-                        }
-
-                    },
-                    left: () => {
-                        if(cardCount >= 0) {
-                            setCardCount(prev => {
-                                const newCardCount = prev - 1;
-                                console.log("o card no left", newCardCount)
-                                if(newCardCount > -1) {
-                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
-
-                                }
-                                if(newCardCount === -1) {
-                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[0]?.blur()
-                                    setMenuFocused(true)
-                                    console.log("o menu option", menuCount)
-                                    selectableMenu[0]?.getElementsByClassName('selectedMenuOption')[menuCount]?.focus()
-                                }
-                                return newCardCount;
-                            })
-
-                        }
-                    },
-                    right: () => {
-                        if(cardCount >= -1) {
-                            if (cardCount < selectableContainers[containerCount]?.getElementsByClassName('selectedCard').length - 1) {
-                                setCardCount(prev => {
-                                    if(cardCount === -1) {
-                                        //aqui o blur pro menu
-                                        //selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[0]?.focus()
-                                        setMenuFocused(false)
-                                        selectableMenu[0]?.getElementsByClassName('selectedMenuOption')[menuCount]?.focus()
-                                    }
-                                    const newCardCount = prev + 1;
-                                    selectableContainer[containerCount]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
-                                    return newCardCount;
-                                })
-                                //terminar aqui
-                                //console.log("VEJAMOS", )
-                            }
-                            
-
-                        }
-
-                        //console.log("Right key pressed on Page 1", selectableContainers[0]?.getElementsByClassName('selectedCard'));
-                    },
-                    home: () => {
-                        console.log("Home key pressed on Page 1");
-                    },
-                    squares: () => {
-                        console.log("Squares key pressed on Page 1");
-                    },
-                    // Outras teclas...
-                });
+                    }
+                }
             }
-        };
+        }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
+    
+        }
+    }
+  };
 
-        document.addEventListener("keydown", keyDownHandler);
-        return () => {
-            document.removeEventListener("keydown", keyDownHandler);
-        };
+  const handleArrowUp = () => {
+    console.log("Seta para cima pressionada");
 
-    }, [containerCount, cardCount, homepageContent, menuCount, menuFocused]); // Dependência vazia para garantir que loadData só seja chamado uma vez
+    if (menuFocused) {
+      // Se o menu estiver focado, navega para o item anterior
+      const prevCount = menuCount - 1;
+      if (menuRef.current && prevCount >= 0) {
+        setMenuCount(prevCount); // Atualiza containerCount
+        menuRef.current.focusButton(prevCount); // Foca o item anterior
+      }
+    } else {
+        let prevItemIndex = containerCount - 1;
+        if (homepageContent[prevItemIndex]) {
+          // Se o item anterior existir, move o foco para o item anterior
+          setContainerCount(prevItemIndex);
+          // Tenta manter o foco no mesmo índice de cartão dentro do item
+          if (buttonRefs.current[prevItemIndex] && buttonRefs.current[prevItemIndex][cardCount]) {
+            buttonRefs.current[prevItemIndex][cardCount].focus();
+          } else {
+            // Se o item anterior não tiver o mesmo número de cartões, foca no primeiro cartão
+            setCardCount(0);
+            buttonRefs.current[prevItemIndex] && buttonRefs.current[prevItemIndex][0].focus();
+          }
+          
+          setTimeout(() => {
+            if (divRef.current) {
+                const refButtonFocused = buttonRefs.current[containerCount - 1][cardCount]
+                
+
+                if (refButtonFocused) {
+                    const elementRect = refButtonFocused.getBoundingClientRect();
+                    
+                    // Distância do topo da div até o topo do elemento focado no conteúdo total
+                    const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;                    
+
+                    if(containerCount == -1) {
+                        //quando for o primeiro elemento da página irá vir pra cá
+
+                    }
+                    if(containerCount >= 0) { 
+                        divRef.current.scrollTo({
+                            top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                            behavior: 'smooth',  // Rolagem suave
+                        });
+
+                    }
+                }
+            }
+        }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
+    
+        }
+    }
+  };
+
+  const handleArrowLeft = () => {
+    if (containerCount === -1 || cardCount === -1) {
+      // Se estamos no menu ou se o card não está focado (cardCount === -1)
+      setMenuFocused(true); // Ativa o foco no menu
+  
+      // Foca o primeiro item do menu
+      if (menuRef.current) {
+        menuRef.current.focusButton(menuCount);
+      }
+    } else {
+    // Se estamos em um card, decrementamos o cardCount para focar no card anterior
+    let previousCardIndex = cardCount - 1;
+
+    if (previousCardIndex >= 0) {
+      // Se houver um card anterior, atualizamos o cardCount e focamos no card
+      setCardCount(previousCardIndex);
+      if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][previousCardIndex]) {
+        buttonRefs.current[containerCount][previousCardIndex].focus();
+      }
+    } else {
+      // Se previousCardIndex for -1, desfocamos o card e focamos no menu
+      setCardCount(-1); // Atualiza o estado de cardCount para -1
+      setMenuFocused(true); // Desfoca o menu
+      if (menuRef.current) {
+        menuRef.current.focusButton(menuCount); // Foca o item do menu
+      }
+    }
+  }
+  };
+  
+  const handleArrowRight = () => {
+    if (menuFocused) {
+        // Se o menu estiver focado, desfocamos o menu
+        setMenuFocused(false); // Desfoca o menu
+    
+        // Desfoca o item de menu que estava com foco
+        if (menuRef.current) {
+          menuRef.current.blurButton(menuCount); // Desfoca o item do menu
+        }
+    
+        // Agora, garantimos que o cardCount seja 0
+        if (containerCount !== -1) {
+          // Se o cardCount estiver -1, significa que não havia foco no card, então foca no primeiro card
+          setCardCount(0); // Garantir que o foco vá para o primeiro card
+        }
+    
+        // Foca no primeiro card
+        if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][0]) {
+          buttonRefs.current[containerCount][0].focus(); // Foca no primeiro card
+        }
+      } else {
+        // Caso contrário, vamos para o próximo card dentro do mesmo array
+        let nextCardIndex = cardCount + 1;
+        if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][nextCardIndex]) {
+          setCardCount(nextCardIndex);
+          buttonRefs.current[containerCount][nextCardIndex].focus();
+        }
+      }
+  };
+
+  const handleEnter = () => {
+    console.log("Enter pressionado");
+    // Implemente a lógica de navegação ou seleção ao pressionar Enter
+  };
+
+  const handleEscape = () => {
+    console.log("Escape pressionado");
+    // Implemente a lógica para quando o usuário pressionar Escape (ex: sair do foco)
+  };
+
+    const {
+        containerCount,
+        cardCount,
+        menuCount,
+        setContainerCount,
+        setCardCount,
+        setMenuCount,
+      } = useKeyNavigation({
+        menuFocused,
+        selectableContainers,
+        selectableMenus,
+        divRef,
+        loading,
+        onArrowUp: () => handleArrowUp(),
+        onArrowDown: () => handleArrowDown(),
+        onArrowLeft: () => handleArrowLeft(),
+        onArrowRight: () => handleArrowRight(),
+        onEnter: () => handleEnter(),
+        onEscape: () => handleEscape(),
+      });
+
     const updateDimensions = () => {
         if (divRef.current) {
             const rect = divRef.current.getBoundingClientRect(); // Pega o tamanho visível da div
@@ -305,30 +315,23 @@ function Home() {
     };
 
 
-    const renderComponentByType = (item, idx) => {
+
+
+    const renderComponentByType = (item, idx1, buttonRefs) => {
         switch (item.type) {
             case "category selection":
-                return (
-                    RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent, model)
-                );
+                return( RenderCards(item, idx1, setFocusedContent, setHaveFocusedEvent, model, buttonRefs) );
             case "most watched":
-                return (
-                    RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent, model)
-                );
+                return( RenderCards(item, idx1, setFocusedContent, setHaveFocusedEvent, model, buttonRefs) );
             case "channels":
-                return (
-                    RenderChannelsCards(item, idx, setFocusedContent, setHaveFocusedEvent)
-                );
-            case "playlist":
-                switch (item.style) {
-                    case "full_width_middle":
-                        return (
-                            RenderCardsWithBackground(item, idx, setFocusedContent, setHaveFocusedEvent)
-                        );
+                return( RenderChannelsCards(item, idx1, setFocusedContent, setHaveFocusedEvent, buttonRefs) )
+                case "playlist":
+                    switch (item.style) {
+                        case "full_width_middle":
+                        return( RenderCardsWithBackground(item, idx1, setFocusedContent, setHaveFocusedEvent, buttonRefs))
+                        //return <RenderCardsWithBackground item={item} idx={idx1} setFocusedContent={() => {}} setHaveFocusedEvent={() => {}} buttonRefs={buttonRefs}/>
                     case "normal":
-                        return (
-                            RenderCards(item, idx, setFocusedContent, setHaveFocusedEvent, model)
-                        );
+                return( RenderCards(item, idx1, setFocusedContent, setHaveFocusedEvent, model, buttonRefs) );
 
                 }
             default:
@@ -349,7 +352,10 @@ function Home() {
 
                 <div className="flex container flexColumn declaredOverflow"
                 >
-                    <Menu status={menuFocused} />
+                    <Menu 
+                        status={menuFocused} 
+                        ref={menuRef}
+                    />
 
                     {haveFocusedEvent === true ?
                         <div className="focusedContent">
@@ -479,8 +485,42 @@ function Home() {
                         }}
                     >
 
-                        {homepageContent.map((item, idx) => {
-                            return renderComponentByType(item, idx)
+                        {homepageContent.map((item, idx1) => {
+                            return renderComponentByType(item, idx1, buttonRefs)
+                            /*
+                            
+                            return (
+                                <div key={idx1} className="cardsContainer ">
+                                <div className="cardsTitle paddingLeftDefault">
+                                    <h3>{item.title}</h3>
+                                </div>
+                        
+                                <div id="bottom" className="cardsContent selectedContainer">
+                                    {item.data.map((rows, idx2) => {
+                                        return(
+                                            <button 
+                                            key={idx2}
+                                            ref={(el) => {
+                                                // Armazena a referência de cada botão
+                                                if (!buttonRefs.current[idx1]) {
+                                                  buttonRefs.current[idx1] = [];
+                                                }
+                                                buttonRefs.current[idx1][idx2] = el;
+                                              }}
+                                            className="cardButton selectedCard"
+                                            >
+                                                <img src={rows.image} className="cardImage"></img>
+                                            </button>
+                                        )
+                                    })}
+                        
+                                    <div className="cardsFinalMarginScrollX"></div>
+                                </div>
+                            </div>
+                            )
+                            */
+
+
                         })}
 
                         <div className="cardsFinalMarginScrollY"></div>

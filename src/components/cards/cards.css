@@ -130,7 +130,7 @@ object-fit: cover;
 .cardsChannelButton {
     width: 200px;
     height: 120px;
-    background-color: rgba(40, 40, 40, 0.7);
+    background-color: rgb(33,33,34);
     margin: 0 5px;
     flex-shrink: 0;
     display: flex;

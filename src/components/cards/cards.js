@@ -1,25 +1,34 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import './cards.css'
 
-export const RenderCards = (item, index, setFocusedContent, setHaveFocusedEvent, model) => {
+export const RenderCards = (item, idx1, setFocusedContent, setHaveFocusedEvent, model, buttonRefs) => {
 
     return (
-        <div key={index} className="cardsContainer ">
+        <div key={idx1} className="cardsContainer ">
         <div className="cardsTitle paddingLeftDefault">
             <h3>{item.title}</h3>
         </div>
 
         <div id="bottom" className="cardsContent selectedContainer">
-            {item.data.map((rows, idx) => {
+            {item.data.map((rows, idx2) => {
                 return(
                     <button 
-                    key={idx}
+                    key={idx2}
+                    ref={(el) => {
+                        // Armazena a referência de cada botão
+                        if (!buttonRefs.current[idx1]) {
+                          buttonRefs.current[idx1] = [];
+                        }
+                        buttonRefs.current[idx1][idx2] = el;
+                      }}
                     className="cardButton selectedCard"
+
                     onFocus={(() => {
                         if(model === 1) {
-                            setFocusedContent(rows);
-                            setHaveFocusedEvent(true)
+                            setFocusedContent([]);
+                            setHaveFocusedEvent(false)
                         }
+
                     })}
                     >
                         <img src={rows.image} className="cardImage"></img>
@@ -33,9 +42,10 @@ export const RenderCards = (item, index, setFocusedContent, setHaveFocusedEvent,
     );
 }
 
-export const RenderCardsWithBackground = (item, idx, setFocusedContent, setHaveFocusedEvent) => {
+export const RenderCardsWithBackground = (item, idx1, setFocusedContent, setHaveFocusedEvent, buttonRefs) => {
+    console.log("meu item", item)
     return(
-        <div key={idx} className="cardsContainerWithBackground">
+        <div key={idx1} className="cardsContainerWithBackground">
             <div className="cardsContainerBgdImage" 
             style={{
                 backgroundImage: `linear-gradient(to right, rgba(40, 40, 40, 0) 5%, rgba(40, 40, 40, 1) 100%) ,url(${item.background_image})`,
@@ -47,11 +57,18 @@ export const RenderCardsWithBackground = (item, idx, setFocusedContent, setHaveF
             ></div>
 
             <div id="middle" className="cardsContainerRow selectedContainer">
-                {item.data.map((item, idx) => {
+                {item.data.map((item, idx2) => {
 
                     return(
-                        <button key={idx} className="cardRowButton selectedCard"
-                        onFocus={(() => {
+                        <button key={idx2} className="cardRowButton selectedCard"
+                        ref={(el) => {
+                            // Armazena a referência de cada botão
+                            if (!buttonRefs.current[idx1]) {
+                              buttonRefs.current[idx1] = [];
+                            }
+                            buttonRefs.current[idx1][idx2] = el;
+                          }}
+                            onFocus={(() => {
                             setFocusedContent([]);
                             setHaveFocusedEvent(false)
                         })}
@@ -65,15 +82,22 @@ export const RenderCardsWithBackground = (item, idx, setFocusedContent, setHaveF
     )
 }
 
-export const RenderChannelsCards = (item, idx, setFocusedContent, setHaveFocusedEvent) => {
-    
+export const RenderChannelsCards = (item, idx1, setFocusedContent, setHaveFocusedEvent, buttonRefs) => {
+
     return(
-        <div key={idx} className="cardsChannelContainer">
+        <div key={idx1} className="cardsChannelContainer">
 
             <div id="channel" className="cardsChannelContent selectedContainer">
-                {item.data.map((item, idx) => {
+                {item.data.map((item, idx2) => {
                     return(
-                        <button key={idx} className="cardsChannelButton selectedCard" 
+                        <button key={idx2} className="cardsChannelButton selectedCard" 
+                        ref={(el) => {
+                            // Armazena a referência de cada botão
+                            if (!buttonRefs.current[idx1]) {
+                              buttonRefs.current[idx1] = [];
+                            }
+                            buttonRefs.current[idx1][idx2] = el;
+                          }}
                         style={{
                             backgroundImage: `url(${item.channels_logo})`,
                             backgroundSize: "150px",
