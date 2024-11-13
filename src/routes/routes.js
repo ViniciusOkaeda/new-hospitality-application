@@ -4,6 +4,9 @@ import Player from "../pages/player/player";
 import Login from "../pages/login/login";
 import Profile from "../pages/profile/profile";
 import Home from "../pages/home/home";
+import Event from "../pages/detailEvent/detailEvent";
+import Channel from "../pages/channel/channel";
+import Guide from "../pages/guide/guide";
 
 function AllRoutes() {
 
@@ -14,9 +17,13 @@ function AllRoutes() {
         <BrowserRouter>
             <Routes>
                 <Route exact path="/login" element={<Login />} />    
-                <Route path="/profile" element={<Profile />} />    
-                <Route path="/home" element={<Home />} />    
-                <Route path="/player" element={<Player />} />   
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/guide" element={<Guide />} />    
+                <Route path="/home" element={<Home />} />
+                <Route path="/channel" element={<Channel />} />
+
+                <Route path="/player" element={<Player />} />
+                <Route path="/event/:type/:event" element={<Event />} />
 
 
                 <Route path="*" element={<Navigate to ={token ? "/profile" : "/login"} />} /> 

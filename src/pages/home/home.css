@@ -41,8 +41,8 @@
     background-position: center;
 }
 
-.focusedTitle {
-    font-family: "Dyna";
+.focusedTitle h1{
+    font-family: "Rubik";
     font-weight: 100;
     text-shadow: none;
 }

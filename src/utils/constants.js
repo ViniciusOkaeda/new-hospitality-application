@@ -75,6 +75,11 @@ export const FormatRating = (rating) => {
     }
 }
 
+export const SaveEvent = (eventData, destination, origin) => {
+
+
+}
+
 
 export const Logout = (navigate) => {
 localStorage.clear();

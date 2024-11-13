@@ -152,6 +152,8 @@ align-items: flex-end;
 text-align: left;
 justify-content: center;
 }
+
+
 .cardsChannelButtonTextContainer h6{
     margin: 0 0 10px 5px;
 
@@ -167,4 +169,32 @@ height: 100%;
 /* Exibe o texto quando o botão estiver com foco */
 .cardsChannelButton:focus .displayNone {
     display: block;
+}
+
+.cardButton:focus .displayNone {
+    display: block;
+}
+
+
+.cardsRecomendationButtonTextContainer {
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom, rgba(17, 16, 20, 0.01) 0%, rgba(17, 16, 20, 0.9) 60%);
+    display: flex;
+    flex-direction: column;
+
+    justify-content: flex-end;
+    }
+
+.cardsRecomendationButtonTextContainer h5 {
+    max-width: 90%;
+    text-align: left;
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+.cardsRecomendationButtonTextContainer h6 {
+    max-width: 90%;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    text-align: left;
 }

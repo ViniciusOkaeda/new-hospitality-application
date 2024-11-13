@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ImgLogo from '../../images/logo_Yplay-01.png';
-import ImgBgd from '../../images/bgd5.jpg';
+import ImgBgd from '../../images/bgd_movies.png';
 import ImgQr from '../../images/qr-code.png';
 import './login.css';
 import { LoginMotv } from '../../services/calls';

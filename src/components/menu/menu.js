@@ -14,8 +14,9 @@ import LogoutIcon from '../../images/logout.png'
 
 import { useNavigate } from "react-router-dom";
 
-export const Menu = forwardRef(({ status }, ref) => {
+export const Menu = forwardRef(({ status, activePage }, ref) => {
 
+    //console.log("meu status é", status)
     const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
@@ -58,15 +59,16 @@ export const Menu = forwardRef(({ status }, ref) => {
     //console.log("o status é ", status.status)
 
     const buttonData = [
-        { icon: SearchIcon, alt: "Pesquisar" },
-        { icon: HomeIcon, alt: "Inicio" },
-        { icon: ChannelIcon, alt: "Canais" },
-        { icon: GuideIcon, alt: "Programação" },
-        { icon: VodIcon, alt: "VOD" },
-        { icon: SavedIcon, alt: "Salvos" },
-        { icon: CatchupIcon, alt: "Arquivo de TV" },
-        { icon: ConfigIcon, alt: "Configurações" },
-        { icon: LogoutIcon, alt: "Sair" },
+        { icon: profile.image, alt: profile.profiles_name, ref: "profile" },
+        { icon: SearchIcon, alt: "Pesquisar", ref: "search" },
+        { icon: HomeIcon, alt: "Inicio", ref: "home" },
+        { icon: ChannelIcon, alt: "Canais", ref: "channel" },
+        { icon: GuideIcon, alt: "Programação", ref: "guide" },
+        { icon: VodIcon, alt: "VOD", ref: "vod" },
+        { icon: SavedIcon, alt: "Salvos", ref: "saved" },
+        { icon: CatchupIcon, alt: "Arquivo de TV", ref: "catchup" },
+        { icon: ConfigIcon, alt: "Configurações", ref: "config" },
+        { icon: LogoutIcon, alt: "Sair", ref: "login" },
     ];
 
     return (
@@ -85,10 +87,24 @@ export const Menu = forwardRef(({ status }, ref) => {
                     {buttonData.map((button, index) => (
                         <button
                             key={index}
-                            className="iconButton selectedMenuOption"
+                            onFocus={(() => {
+                                activePage(button.ref)
+                            })}
+                            className=
+                            {
+                                index === 0 && status === false ? "iconButtonDisplayedNone" :
+                                index === 8 && status === false ? "displayNone" :
+                                index === 9 && status === false ? "displayNone" :
+                                index === 0 ? "iconButtonProfile selectedMenuOption" : 
+                                index === 8 ? "iconButton selectedMenuOption menuMarginTop" :
+                                "iconButton selectedMenuOption" 
+                            }
                             ref={(el) => buttonsRef.current[index] = el} // Atribuindo a ref ao botão
                         >
-                            <img src={button.icon} alt={button.alt} className="iconButtonImg" />
+                            <img src={button.icon} alt={button.alt} 
+                            className={index === 0 ? "iconButtonImgProfile" : "iconButtonImg" }
+                            
+                            />
                         </button>
                     ))}
                 </div>
@@ -98,7 +114,7 @@ export const Menu = forwardRef(({ status }, ref) => {
 
 
 
-            {status.status === true ?
+            {status === true ?
                 <div className="menuRightContainer">
                     <div className="menuIconTexts">
                         <div className="menuProfileText">
