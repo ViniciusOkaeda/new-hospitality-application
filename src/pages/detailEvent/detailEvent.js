@@ -18,6 +18,7 @@ function Event() {
     const { type } = useParams(); // Pega o ID da URL
     const { event } = useParams(); // Pega o ID da URL
     const navigate = useNavigate();
+    const [enableArrows, setEnableArrows] = useState(false)
 
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
@@ -79,6 +80,7 @@ function Event() {
                 setError(err.message || 'An error occurred');
             } finally {
                 setLoading(false); // Dados carregados, então setar como false
+                setEnableArrows(true);
             }
         };
 
@@ -88,26 +90,123 @@ function Event() {
 
     const handleArrowDown = () => {
         console.log("Seta para baixo pressionada");
-        console.log("meu ref", divRef.current[0])
-        divRef.current[1].focus()
-        window.scrollTo(0, 500)
+
+
+if(containerCount < 1) {
+    let nextItemIndex = containerCount + 1;
+    setContainerCount(nextItemIndex);
+    if(nextItemIndex === 0) {
+        console.log("opa")
+        if(divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+            divRef.current[nextItemIndex][buttonCount].focus();
+        }
+    } else if (nextItemIndex === 1) {
+
+        if(divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
+            console.log("o next", nextItemIndex)
+            console.log("meu ref", divRef.current[nextItemIndex])
+            window.scrollTo(0, 800)
+            divRef.current[nextItemIndex][cardCount].focus();
+        }
+    }
+
+}
+
+
+        //divRef.current[1].focus()
+
     };
 
     const handleArrowUp = () => {
         console.log("Seta para cima pressionada");
-        window.scrollTo(0, 0)
+        if(containerCount > 0) {
+            let nextItemIndex = containerCount - 1;
+            setContainerCount(nextItemIndex);
+            if(nextItemIndex === 0) {
+                console.log("opa")
+                if(divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                    window.scrollTo(0, 0)
+                    divRef.current[nextItemIndex][buttonCount].focus();
+                }
+            }
+        }
     };
 
     const handleArrowLeft = () => {
-
+        if(containerCount === 0) {
+            if(buttonCount > 0) {
+                let nextItemIndex = buttonCount - 1;
+                setButtonCount(nextItemIndex)
+                if(divRef.current[0][nextItemIndex]) {
+                    divRef.current[0][nextItemIndex].focus();
+                }
+            }
+        } else if (containerCount === 1) {
+            if(cardCount > 0) {
+                let nextItemIndex = cardCount - 1
+                setCardCount(nextItemIndex);
+                if(divRef.current[1][nextItemIndex]) {
+                    divRef.current[1][nextItemIndex].focus();
+                }
+            }
+        }
     };
 
     const handleArrowRight = () => {
+        if(containerCount === 0) {
+            console.log("to aqui", divRef.current[0].length)
+            if(buttonCount < divRef.current[0].length -1) {
+                let nextItemIndex = buttonCount + 1;
+                setButtonCount(nextItemIndex)
+                console.log("o next", nextItemIndex)
+                if(divRef.current[0][nextItemIndex]) {
+                    divRef.current[0][nextItemIndex].focus();
+                }
+            }
+        } else if (containerCount === 1) {
+            console.log("o width é", divRef.current.scrollWidth)
+            if(cardCount < divRef.current[1].length -1) {
+                let nextItemIndex = cardCount + 1;
+                setCardCount(nextItemIndex)
+                console.log("o next", nextItemIndex)
+                if(divRef.current[1][nextItemIndex]) {
+                    divRef.current[1][nextItemIndex].focus();
+                }
+            }
 
+            setTimeout(() =>{
+                if(divRef.current) {
+                    const refButtonFocusedX = divRef.current[1][cardCount]
+                    
+                    if(refButtonFocusedX) {
+                        const elementRect = refButtonFocusedX.getBoundingClientRect();
+                        console.log("o element", elementRect)
+
+                        const distanceFromLeftOfContent = elementRect.left - divRef.current.getBoundingClientRect().left + divRef.current.scrollLeft 
+                        console.log("o dist", distanceFromLeftOfContent)
+
+                        divRef.current.scrollTo({
+                            left: distanceFromLeftOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                            behavior: 'smooth',  // Rolagem suave
+                        });
+
+
+                    }
+                }
+            }, 100)
+
+        }
     };
 
     const handleEnter = () => {
 
+        if(containerCount === 0) {
+
+        }else if (containerCount === 1) {
+            console.log("o recomendado com foco", focusedRecomendation)
+            navigate(`/event/${focusedRecomendation.type + "/" + focusedRecomendation.id}`)
+
+        }
     };
 
     const handleEscape = () => {
@@ -120,10 +219,13 @@ function Event() {
     const {
         containerCount,
         cardCount,
+        buttonCount,
         setContainerCount,
         setCardCount,
+        setButtonCount,
     } = useKeyNavigation({
         loading,
+        enableArrows,
         onArrowUp: () => handleArrowUp(),
         onArrowDown: () => handleArrowDown(),
         onArrowLeft: () => handleArrowLeft(),
@@ -269,61 +371,49 @@ function Event() {
                         <div ref={divRef}>
                             <div className="buttonOptionsContainer paddingLeftDefault">
                                 <button
-                                    className={visible === true ? "buttonWithImage buttonPadding" : "buttonWithImage"}
+                                    className="buttonWithImage"
                                     ref={(el) => {
                                         // Armazena a referência de cada botão
                                         if (!divRef.current[0]) {
                                             divRef.current[0] = [];
                                         }
-                                        divRef.current[0] = el;
+                                        divRef.current[0][0] = el;
                                     }}
-                                    onClick={(() => {
-                                        setVisible(!visible)
-                                    })}>
+                                        >
                                     <img className="buttonWithImageSize" src={Play}></img>
 
-                                    {visible &&
-                                        <p>Assistir Agora</p>
+                                        <p className="displayNoneText">Assistir Agora</p>
 
-                                    }
                                 </button>
 
-                                <button className={visible === true ? "buttonWithImage buttonPadding" : "buttonWithImage"}
+                                <button className="buttonWithImage"
                                     ref={(el) => {
                                         // Armazena a referência de cada botão
-                                        if (!divRef.current[1]) {
-                                            divRef.current[1] = [];
+                                        if (!divRef.current[0]) {
+                                            divRef.current[0] = [];
                                         }
-                                        divRef.current[1] = el;
+                                        divRef.current[0][1] = el;
                                     }}
-                                    onClick={(() => {
-                                        setVisible(!visible)
-                                    })}>
+
+                                    >
                                     <img className="buttonWithImageSize2" src={AddList}></img>
 
-                                    {visible &&
-                                        <p>Adicionar para minha lista</p>
+                                        <p className="displayNoneText">Adicionar para minha lista</p>
 
-                                    }
                                 </button>
 
-                                <button className={visible === true ? "buttonWithImage buttonPadding" : "buttonWithImage"}
+                                <button className="buttonWithImage"
                                     ref={(el) => {
                                         // Armazena a referência de cada botão
-                                        if (!divRef.current[2]) {
-                                            divRef.current[2] = [];
+                                        if (!divRef.current[0]) {
+                                            divRef.current[0] = [];
                                         }
-                                        divRef.current[2] = el;
+                                        divRef.current[0][2] = el;
                                     }}
-                                    onClick={(() => {
-                                        setVisible(!visible)
-                                    })}>
+                                    >
                                     <img className="buttonWithImageSize3" src={AddRecording}></img>
 
-                                    {visible &&
-                                        <p>Gravar</p>
-
-                                    }
+                                        <p className="displayNoneText">Gravar</p>
                                 </button>
 
                             </div>
@@ -334,7 +424,7 @@ function Event() {
                                 </div>
 
 
-                                <RenderRecomendationCards item={recomendationEvent} setFocusedRecomendation={setFocusedRecomendation} />
+                                <RenderRecomendationCards item={recomendationEvent} setFocusedRecomendation={setFocusedRecomendation} divRef={divRef} />
                             </div>
 
                         </div>

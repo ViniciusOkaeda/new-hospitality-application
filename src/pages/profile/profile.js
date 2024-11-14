@@ -7,6 +7,8 @@ import { Logout } from "../../utils/constants";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
+    const [enableArrows, setEnableArrows] = useState(false)
+
     const [containerCount, setContainerCount] = useState(-1); // Começa em 0 para o primeiro elemento
     const [cardCount, setCardCount] = useState(0); // Começa em 0 para o primeiro elemento
     const [selectableContainers, setSelectableContainers] = useState([]);
@@ -36,6 +38,7 @@ function Profile() {
                 setError(err.message || 'An error occurred');
             } finally {
                 setLoading(false); // Dados carregados, então setar como false
+                setEnableArrows(true)
             }
         };
 

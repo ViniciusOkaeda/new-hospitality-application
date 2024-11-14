@@ -201,7 +201,7 @@ export const RenderChannelsCards = ({ item, idx1, setFocusedContent, setHaveFocu
     );
 };
 
-export const RenderRecomendationCards = ({ item, setFocusedRecomendation }) => {
+export const RenderRecomendationCards = ({ item, setFocusedRecomendation, divRef }) => {
 
     const [isLoaded, setIsLoaded] = useState(new Array(item.data.length).fill(false)); // Estado para controlar o carregamento das imagens de fundo
     
@@ -247,6 +247,13 @@ export const RenderRecomendationCards = ({ item, setFocusedRecomendation }) => {
                   return (
                       <button
                           key={idx2}
+                          ref={(el) => {
+                            // Armazena a referência de cada botão
+                            if (!divRef.current[1]) {
+                                divRef.current[1] = [];
+                            }
+                            divRef.current[1][idx2] = el;
+                        }}
                           className="cardButton selectedCard"
                           style={{
                             backgroundImage: isLoaded[idx2] ? `url(${rows.image})` : 'none', // Aplica a imagem de fundo quando carregada
@@ -257,11 +264,11 @@ export const RenderRecomendationCards = ({ item, setFocusedRecomendation }) => {
                             transition: 'opacity 0.5s ease-in-out', // Transição suave
                           }}
                           onFocus={() => {
+                            setFocusedRecomendation(rows)
 
                             }}
                           
                             onClick={(() => {
-                              setFocusedRecomendation(rows)
                             })}
                       >
                       <div className="displayNone">

@@ -11,6 +11,8 @@ import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest
 
 
 function Home() {
+    const [enableArrows, setEnableArrows] = useState(false)
+
     console.log("o window", window.location)
     const [isLoaded, setIsLoaded] = useState(false); // Estado para controlar o carregamento
 
@@ -63,6 +65,7 @@ function Home() {
                 setError(err.message || 'An error occurred');
             } finally {
                 setLoading(false); // Dados carregados, então setar como false
+                setEnableArrows(true);
             }
         };
 

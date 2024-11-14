@@ -240,3 +240,22 @@
 .recomendationTitle h2{
 font-weight: 400;
 }
+
+.displayNoneText {
+    display: none;
+}
+
+
+/* Exibe o texto quando o botão estiver com foco */
+.buttonWithImage:focus .displayNoneText {
+    display: block;
+}
+
+.buttonWithImage:focus {
+    padding: 10px 25px;
+    transition: 'opacity 2s ease-in-out'
+}
+
+.cardButton:focus .displayNone {
+    display: block;
+}
