@@ -11,11 +11,8 @@ export const GetLanguage = () => {
 }
 
 export const CheckIfHaveList = (myList, type, event) => {
-    console.log("minha lista", myList)
     const checkTypeInList = myList.filter(item => item.type === type)
-    console.log("meu type filtrado", checkTypeInList)
     const checkEventInList = checkTypeInList.filter(item => item.id === parseInt(event))
-    console.log("o que temos aqui", checkEventInList)
     if(checkEventInList.length > 0) {
         return true
     } else {
@@ -64,7 +61,14 @@ export const FormatDate = (dateString) => {
   
     // Formatar a data
     if (date >= today) {
-      return `hoje, ${formatTime(date)}`;
+
+        if(date == today) {
+            return `hoje, ${formatTime(date)}`;
+
+        } else if (date > today) {
+            return `amanhã, ${formatTime(date)}`;
+
+        }
     } else if (date >= yesterday) {
       return `ontem, ${formatTime(date)}`;
     } else {

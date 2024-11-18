@@ -1,0 +1,48 @@
+.bottomMenuContainer {
+    width: 1920px;
+    height: 450px;
+    background-color: red;
+    position: absolute;
+    z-index: 100000000;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.bottomMenuTitle {
+    width: 1920px;
+    height: 200px;
+    background-color: blue;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.bottomMenuTime {
+    width: 1920px;
+    height: 100px;
+    background-color: violet;
+}
+.bottomMenuOptions {
+    width: 1920px;
+    height: 100px;
+    background-color: green;
+    display: flex;
+    justify-content: space-between;
+}
+
+.bottomOptionsButtonContainer1 {
+min-width: 15%;
+    height: 100%;
+    background-color: purple;
+}
+.bottomOptionsButtonContainer2 {
+    width: 20%;
+    height: 100%;
+    background-color: purple;
+}
+.bottomOptionsButtonContainer3 {
+    width: 20%;
+    height: 100%;
+    background-color: purple;
+}

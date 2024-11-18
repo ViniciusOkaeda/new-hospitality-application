@@ -5,6 +5,7 @@ import { Loader } from "../../components/loader/loader";
 import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages, CheckIfHaveList, CheckIfHaveRecording } from "../../utils/constants";
 import { GetEventRecomendationRequest, GetEventRequestTv, GetEventRequestVod, GetMyListFull, GetRecordingsByProfileV2, AddToMyList, RemoveFromMyList, AddRecordingV2, RemoveRecording } from "../../services/calls";
 import { useKeyNavigation } from "../../utils/newNavigation";
+import FutureIcon from "../../images/future.png";
 import AddList from "../../images/list-add.png"
 import RemoveList from "../../images/list-remove.png"
 import AddRecordingImage from "../../images/button-rec.png"
@@ -30,10 +31,28 @@ function Event() {
     const [visible, setVisible] = useState(false)
     const [focusedRecomendation, setFocusedRecomendation] = useState([])
 
-
+    const [resultDate, setResultDate] = useState(null);
     const divRef = useRef([])
     const buttonsRef = useRef([])
     const recomendationsRef = useRef([])
+
+    const isFutureDate = (dateString) => {
+        // Cria um objeto Date a partir da string
+        const targetDate = new Date(dateString);
+        
+        // Cria um objeto Date com a data e hora atual
+        const currentDate = new Date();
+    
+        // Compara a data fornecida com a data atual
+        return targetDate > currentDate;
+      };
+    
+      const checkDate = (start) => {
+        const dateToCheck = start;  // Exemplo de data fornecida
+        const result = isFutureDate(dateToCheck);
+        console.log("o resultado do check é", result)
+        setResultDate(result);  // Atualiza o estado com o resultado
+      };
 
     const handleSendToList = async (event, type) => {
         const response = await AddToMyList(event, type)
@@ -116,6 +135,8 @@ function Event() {
                             resultMyList.status === 1 &&
                             resultMyRecordings.status === 1
                         ) {
+                            console.log("nos temos", resultEventRequest.response[0].start)
+                            checkDate(resultEventRequest.response[0].start)
                             setEventContent(resultEventRequest.response[0])
                             setRecomendationEvent(resultRecomendationRequest.response[0])
                             setMyList(resultMyList.response)
@@ -267,6 +288,14 @@ function Event() {
 
         if (containerCount === 0) {
             if (buttonCount === 0) {
+                if(type === "TV") {
+                    if(resultDate === false) {
+                        navigate(`/player/${type}/${event}/${eventContent.channels_id}`)
+                        console.log("é TV", eventContent.channels_id)
+                    }
+                } else {
+
+                }
 
             } else if (buttonCount === 1) {
                 const myCheck = CheckIfHaveList(myList, type, event)
@@ -469,6 +498,26 @@ function Event() {
 
                         <div ref={divRef}>
                             <div className="buttonOptionsContainer paddingLeftDefault">
+
+                                {type === "TV" ?
+                                    resultDate === true ? 
+                                <button
+                                    className="buttonWithImage"
+                                    ref={(el) => {
+                                        // Armazena a referência de cada botão
+                                        if (!divRef.current[0]) {
+                                            divRef.current[0] = [];
+                                        }
+                                        divRef.current[0][0] = el;
+                                    }}
+                                >
+                                    <img className="buttonWithImageSize2" src={FutureIcon}></img>
+
+                                    <p className="displayNoneText">Disponível em breve</p>
+                                </button>
+
+                                    :
+
                                 <button
                                     className="buttonWithImage"
                                     ref={(el) => {
@@ -483,6 +532,23 @@ function Event() {
 
                                     <p className="displayNoneText">Assistir Agora</p>
                                 </button>
+                                :
+                                <button
+                                    className="buttonWithImage"
+                                    ref={(el) => {
+                                        // Armazena a referência de cada botão
+                                        if (!divRef.current[0]) {
+                                            divRef.current[0] = [];
+                                        }
+                                        divRef.current[0][0] = el;
+                                    }}
+                                >
+                                    <img className="buttonWithImageSize" src={Play}></img>
+
+                                    <p className="displayNoneText">Assistir Agora</p>
+                                </button>
+                                
+                                }
 
 
 

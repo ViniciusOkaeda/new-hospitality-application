@@ -24,10 +24,11 @@ export const useKeyNavigation = ({
 
 
   useEffect(() => {
-    console.log("o enable é", enableArrows)
+    //console.log("o enable é", enableArrows)
     const keyDownHandler = (event) => {
       //if (!menuFocused) return; // Se o menu não estiver focado, ignora os eventos
       if(enableArrows === true) {
+        setTimeout(() => {
           switch (event.keyCode) {
             case 38:
               onArrowUp();
@@ -56,6 +57,7 @@ export const useKeyNavigation = ({
             default:
               break;
           }
+        }, 100)
       }
 
 
