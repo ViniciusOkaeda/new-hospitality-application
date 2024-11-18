@@ -175,6 +175,7 @@ export const GetRecordingsByProfileV2 = async () => {
 }
 //call para gravar eventos (opção disponivel apenas para eventos TV)
 export const AddRecordingV2 = async (eventId) => {
+    console.log("oq temos no add", eventId)
     const auth = localStorage.getItem("authorization");
     const profile = sessionStorage.getItem("profileid");
     const language = await GetLanguage();

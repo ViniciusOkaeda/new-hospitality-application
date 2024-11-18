@@ -1,0 +1,45 @@
+/* CountdownMessage.css */
+
+/* Efeito de fade-in */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+  }
+  
+  /* Efeito de fade-out */
+  .fade-out {
+    opacity: 1;
+    animation: fadeOut 0.5s forwards;
+  }
+
+.countDownContainer {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX( -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 1000;
+  }
+  
+  /* Definição da animação fadeIn */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  /* Definição da animação fadeOut */
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }

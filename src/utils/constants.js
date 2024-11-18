@@ -10,6 +10,40 @@ export const GetLanguage = () => {
     return language
 }
 
+export const CheckIfHaveList = (myList, type, event) => {
+    console.log("minha lista", myList)
+    const checkTypeInList = myList.filter(item => item.type === type)
+    console.log("meu type filtrado", checkTypeInList)
+    const checkEventInList = checkTypeInList.filter(item => item.id === parseInt(event))
+    console.log("o que temos aqui", checkEventInList)
+    if(checkEventInList.length > 0) {
+        return true
+    } else {
+        return false
+    }
+}
+export const CheckIfHaveRecording = (myRecordings, event) => {
+    if(myRecordings.length > 1) {
+        const checkEventInList = myRecordings.map(e => e.data.map(e => e)).flat()
+        const checkEventInList2 = checkEventInList.filter(item => parseInt(item.id) === parseInt(event))
+        if(checkEventInList2.length > 0) {
+            return true
+        } else {
+            return false
+        }
+
+    } else if (myRecordings.length === 1) {
+        const checkEventInList = myRecordings[0].data.filter(item => parseInt(item.id) === parseInt(event))
+        if(checkEventInList.length > 0) {
+            return true
+        } else {
+            return false
+        }
+    } else {
+        return false
+    }
+}
+
 export const FormatDate = (dateString) => {
     const date = new Date(dateString);
     const today = new Date();

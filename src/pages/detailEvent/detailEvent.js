@@ -2,15 +2,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { useLocation, useParams, useNavigate } from 'react-router-dom';
 import './detailEvent.css';
 import { Loader } from "../../components/loader/loader";
-import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
-import { GetEventRecomendationRequest, GetEventRequestTv, GetEventRequestVod, GetMyListFull, GetRecordingsByProfileV2 } from "../../services/calls";
+import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages, CheckIfHaveList, CheckIfHaveRecording } from "../../utils/constants";
+import { GetEventRecomendationRequest, GetEventRequestTv, GetEventRequestVod, GetMyListFull, GetRecordingsByProfileV2, AddToMyList, RemoveFromMyList, AddRecordingV2, RemoveRecording } from "../../services/calls";
 import { useKeyNavigation } from "../../utils/newNavigation";
 import AddList from "../../images/list-add.png"
 import RemoveList from "../../images/list-remove.png"
-import AddRecording from "../../images/button-rec.png"
-import RemoveRecording from "../../images/button-norec.png"
+import AddRecordingImage from "../../images/button-rec.png"
+import RemoveRecordingImage from "../../images/button-norec.png"
 import Play from "../../images/play-button.png"
 import { RenderRecomendationCards } from "../../components/cards/cards";
+import { CountdownMessage } from "../../components/count-message/countDownMessage"
 
 
 
@@ -18,8 +19,8 @@ function Event() {
     const { type } = useParams(); // Pega o ID da URL
     const { event } = useParams(); // Pega o ID da URL
     const navigate = useNavigate();
-    const [enableArrows, setEnableArrows] = useState(false)
 
+    const [enableArrows, setEnableArrows] = useState(false)
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const [eventContent, setEventContent] = useState([]);
@@ -28,14 +29,78 @@ function Event() {
     const [myRecordings, setMyRecordings] = useState([])
     const [visible, setVisible] = useState(false)
     const [focusedRecomendation, setFocusedRecomendation] = useState([])
-    //console.log("vejamos", focusedRecomendation)
 
-    //console.log("oq temos de event", eventContent)
-    //console.log("oq temos de recomendation event", recomendationEvent)
 
     const divRef = useRef([])
     const buttonsRef = useRef([])
     const recomendationsRef = useRef([])
+
+    const handleSendToList = async (event, type) => {
+        const response = await AddToMyList(event, type)
+
+        if (response) {
+            if (response.status === 1) {
+                const resultMyList = await GetMyListFull();
+                if (resultMyList) {
+                    if (resultMyList.status === 1) {
+                        setMyList(resultMyList.response)
+                    }
+                }
+            }
+        }
+
+    };
+
+    const handleRemoveToList = async (event, type) => {
+        const response = await RemoveFromMyList(event, type)
+
+        if (response) {
+            if (response.status === 1) {
+                const resultMyList = await GetMyListFull();
+                if (resultMyList) {
+                    if (resultMyList.status === 1) {
+                        setMyList(resultMyList.response)
+                    }
+                }
+            }
+        }
+
+    };
+
+
+    const handleSendToRecording = async (id) => {
+        const response = await AddRecordingV2(id)
+
+        if (response) {
+            if (response.status === 1) {
+                const resultMyRecording = await GetRecordingsByProfileV2();
+                if (resultMyRecording) {
+                    if (resultMyRecording.status === 1) {
+                        setMyRecordings(resultMyRecording.response)
+                    }
+                }
+            } else {
+
+            }
+        }
+
+    };
+
+    const handleRemoveToRecording = async (id) => {
+        const response = await RemoveRecording(id)
+
+        if (response) {
+            if (response.status === 1) {
+                const resultMyRecording = await GetRecordingsByProfileV2();
+                if (resultMyRecording) {
+                    if (resultMyRecording.status === 1) {
+                        setMyRecordings(resultMyRecording.response)
+                    }
+                }
+            }
+        }
+
+    };
 
     useEffect(() => {
         const loadData = async () => {
@@ -92,25 +157,25 @@ function Event() {
         console.log("Seta para baixo pressionada");
 
 
-if(containerCount < 1) {
-    let nextItemIndex = containerCount + 1;
-    setContainerCount(nextItemIndex);
-    if(nextItemIndex === 0) {
-        console.log("opa")
-        if(divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
-            divRef.current[nextItemIndex][buttonCount].focus();
-        }
-    } else if (nextItemIndex === 1) {
+        if (containerCount < 1) {
+            let nextItemIndex = containerCount + 1;
+            setContainerCount(nextItemIndex);
+            if (nextItemIndex === 0) {
+                console.log("opa")
+                if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                    divRef.current[nextItemIndex][buttonCount].focus();
+                }
+            } else if (nextItemIndex === 1) {
 
-        if(divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
-            console.log("o next", nextItemIndex)
-            console.log("meu ref", divRef.current[nextItemIndex])
-            window.scrollTo(0, 800)
-            divRef.current[nextItemIndex][cardCount].focus();
-        }
-    }
+                if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
+                    console.log("o next", nextItemIndex)
+                    console.log("meu ref", divRef.current[nextItemIndex])
+                    window.scrollTo(0, 800)
+                    divRef.current[nextItemIndex][cardCount].focus();
+                }
+            }
 
-}
+        }
 
 
         //divRef.current[1].focus()
@@ -119,12 +184,12 @@ if(containerCount < 1) {
 
     const handleArrowUp = () => {
         console.log("Seta para cima pressionada");
-        if(containerCount > 0) {
+        if (containerCount > 0) {
             let nextItemIndex = containerCount - 1;
             setContainerCount(nextItemIndex);
-            if(nextItemIndex === 0) {
+            if (nextItemIndex === 0) {
                 console.log("opa")
-                if(divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
                     window.scrollTo(0, 0)
                     divRef.current[nextItemIndex][buttonCount].focus();
                 }
@@ -133,19 +198,19 @@ if(containerCount < 1) {
     };
 
     const handleArrowLeft = () => {
-        if(containerCount === 0) {
-            if(buttonCount > 0) {
+        if (containerCount === 0) {
+            if (buttonCount > 0) {
                 let nextItemIndex = buttonCount - 1;
                 setButtonCount(nextItemIndex)
-                if(divRef.current[0][nextItemIndex]) {
+                if (divRef.current[0][nextItemIndex]) {
                     divRef.current[0][nextItemIndex].focus();
                 }
             }
         } else if (containerCount === 1) {
-            if(cardCount > 0) {
+            if (cardCount > 0) {
                 let nextItemIndex = cardCount - 1
                 setCardCount(nextItemIndex);
-                if(divRef.current[1][nextItemIndex]) {
+                if (divRef.current[1][nextItemIndex]) {
                     divRef.current[1][nextItemIndex].focus();
                 }
             }
@@ -153,36 +218,36 @@ if(containerCount < 1) {
     };
 
     const handleArrowRight = () => {
-        if(containerCount === 0) {
+        if (containerCount === 0) {
             console.log("to aqui", divRef.current[0].length)
-            if(buttonCount < divRef.current[0].length -1) {
+            if (buttonCount < divRef.current[0].length - 1) {
                 let nextItemIndex = buttonCount + 1;
                 setButtonCount(nextItemIndex)
                 console.log("o next", nextItemIndex)
-                if(divRef.current[0][nextItemIndex]) {
+                if (divRef.current[0][nextItemIndex]) {
                     divRef.current[0][nextItemIndex].focus();
                 }
             }
         } else if (containerCount === 1) {
             console.log("o width é", divRef.current.scrollWidth)
-            if(cardCount < divRef.current[1].length -1) {
+            if (cardCount < divRef.current[1].length - 1) {
                 let nextItemIndex = cardCount + 1;
                 setCardCount(nextItemIndex)
                 console.log("o next", nextItemIndex)
-                if(divRef.current[1][nextItemIndex]) {
+                if (divRef.current[1][nextItemIndex]) {
                     divRef.current[1][nextItemIndex].focus();
                 }
             }
 
-            setTimeout(() =>{
-                if(divRef.current) {
+            setTimeout(() => {
+                if (divRef.current) {
                     const refButtonFocusedX = divRef.current[1][cardCount]
-                    
-                    if(refButtonFocusedX) {
+
+                    if (refButtonFocusedX) {
                         const elementRect = refButtonFocusedX.getBoundingClientRect();
                         console.log("o element", elementRect)
 
-                        const distanceFromLeftOfContent = elementRect.left - divRef.current.getBoundingClientRect().left + divRef.current.scrollLeft 
+                        const distanceFromLeftOfContent = elementRect.left - divRef.current.getBoundingClientRect().left + divRef.current.scrollLeft
                         console.log("o dist", distanceFromLeftOfContent)
 
                         divRef.current.scrollTo({
@@ -200,11 +265,45 @@ if(containerCount < 1) {
 
     const handleEnter = () => {
 
-        if(containerCount === 0) {
+        if (containerCount === 0) {
+            if (buttonCount === 0) {
 
-        }else if (containerCount === 1) {
+            } else if (buttonCount === 1) {
+                const myCheck = CheckIfHaveList(myList, type, event)
+                //CheckIfHaveList(myList, type, event)
+                console.log("mycheck", myCheck)
+                if (myCheck === true) {
+                    handleRemoveToList(event, type)
+                    //remover da lista
+                } else {
+                    //adicionar na lista
+                    handleSendToList(event, type)
+
+
+                    //AddToMyList(event, type)
+                }
+            } else if (buttonCount === 2) {
+                const myCheck = CheckIfHaveRecording(myRecordings, event)
+                //CheckIfHaveList(myList, type, event)
+                console.log("mycheck", myCheck)
+                if (myCheck === true) {
+                    handleRemoveToRecording(event)
+                    //remover da lista
+                } else {
+                    //adicionar na lista
+                    handleSendToRecording(event)
+                }
+
+            }
+            console.log("meu buttonCont é", buttonCount)
+
+        } else if (containerCount === 1) {
             console.log("o recomendado com foco", focusedRecomendation)
-            navigate(`/event/${focusedRecomendation.type + "/" + focusedRecomendation.id}`)
+            navigate(`/event/${focusedRecomendation.type}/${focusedRecomendation.id}`, { replace: true });
+            window.location.reload()
+            //handleRedirect(focusedRecomendation.type, focusedRecomendation.id)
+            //navigate(`/event/${focusedRecomendation.type}/${focusedRecomendation.id}`)
+
 
         }
     };
@@ -379,12 +478,14 @@ if(containerCount < 1) {
                                         }
                                         divRef.current[0][0] = el;
                                     }}
-                                        >
+                                >
                                     <img className="buttonWithImageSize" src={Play}></img>
 
-                                        <p className="displayNoneText">Assistir Agora</p>
-
+                                    <p className="displayNoneText">Assistir Agora</p>
                                 </button>
+
+
+
 
                                 <button className="buttonWithImage"
                                     ref={(el) => {
@@ -395,26 +496,53 @@ if(containerCount < 1) {
                                         divRef.current[0][1] = el;
                                     }}
 
-                                    >
-                                    <img className="buttonWithImageSize2" src={AddList}></img>
+                                >
+                                    {CheckIfHaveList(myList, type, event) === true ?
+                                        <>
+                                            <img className="buttonWithImageSize2" src={RemoveList}></img>
 
-                                        <p className="displayNoneText">Adicionar para minha lista</p>
+                                            <p className="displayNoneText">Remover da minha lista</p>
 
+                                        </>
+                                        :
+                                        <>
+                                            <img className="buttonWithImageSize2" src={AddList}></img>
+
+                                            <p className="displayNoneText">Adicionar para minha lista</p>
+
+                                        </>
+                                    }
                                 </button>
 
-                                <button className="buttonWithImage"
-                                    ref={(el) => {
-                                        // Armazena a referência de cada botão
-                                        if (!divRef.current[0]) {
-                                            divRef.current[0] = [];
-                                        }
-                                        divRef.current[0][2] = el;
-                                    }}
+                                {type === "TV" && (
+                                    <button className="buttonWithImage"
+                                        ref={(el) => {
+                                            // Armazena a referência de cada botão
+                                            if (!divRef.current[0]) {
+                                                divRef.current[0] = [];
+                                            }
+                                            divRef.current[0][2] = el;
+                                        }}
                                     >
-                                    <img className="buttonWithImageSize3" src={AddRecording}></img>
+                                        {CheckIfHaveRecording(myRecordings, event) === true
+                                            ?
+                                            <>
+                                                <img className="buttonWithImageSize3" src={RemoveRecordingImage}></img>
 
-                                        <p className="displayNoneText">Gravar</p>
-                                </button>
+                                                <p className="displayNoneText">Remover das gravações</p>
+
+                                            </>
+                                            :
+                                            <>
+                                                <img className="buttonWithImageSize3" src={AddRecordingImage}></img>
+
+                                                <p className="displayNoneText">Gravar</p>
+
+                                            </>}
+                                    </button>
+
+
+                                )}
 
                             </div>
 
@@ -422,7 +550,6 @@ if(containerCount < 1) {
                                 <div className="recomendationTitle paddingLeftDefault">
                                     <h2>{recomendationEvent.title}</h2>
                                 </div>
-
 
                                 <RenderRecomendationCards item={recomendationEvent} setFocusedRecomendation={setFocusedRecomendation} divRef={divRef} />
                             </div>

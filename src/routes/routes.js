@@ -22,8 +22,12 @@ function AllRoutes() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/channel" element={<Channel />} />
 
-                <Route path="/player" element={<Player />} />
-                <Route path="/event/:type/:event" element={<Event />} />
+                <Route path="/player/:type/:event/:channel?" element={<Player />} />
+
+                {/* Rota especifica para lives */}
+                <Route path="/player/TV/live/:channel" element={<Player />} />
+
+                <Route path="/event/:type/:event" element={<Event />}/>
 
 
                 <Route path="*" element={<Navigate to ={token ? "/profile" : "/login"} />} /> 
