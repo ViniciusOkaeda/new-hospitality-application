@@ -10,6 +10,11 @@ import { handleKeyDown } from "../../utils/navigation";
 function Login() {
     const [containerCount, setContainerCount] = useState(-1); // Começa em 0 para o primeiro elemento
     const [selectableContainers, setSelectableContainers] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
+    // Função chamada quando a imagem termina de carregar
+    const handleImageLoad = () => {
+        setIsLoaded(true); // Marca a imagem como carregada
+    };
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -81,7 +86,13 @@ function Login() {
                     <button className="selectedCard cfg">
                         <div className="buttonQr">
                             <div className="formQrCodeIcon">
-                                <img src={ImgQr} className="imgQr" alt="QR Code" />
+                                <img                                 onLoad={handleImageLoad}
+                                style={{
+                                    opacity: isLoaded ? 1 : 0,
+                                    transition: 'opacity 0.5s ease-in-out', // Efeito de transição
+                                }}
+                                loading="lazy"
+                                src={ImgQr} className="imgQr" alt="QR Code" />
                             </div>
                             <h4>Login via QR Code</h4>
                         </div>

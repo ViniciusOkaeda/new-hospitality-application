@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useParams, useNavigate } from 'react-router-dom';
+import { useLocation, useParams, useNavigate, Redirect } from 'react-router-dom';
 import './detailEvent.css';
 import { Loader } from "../../components/loader/loader";
 import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages, CheckIfHaveList, CheckIfHaveRecording } from "../../utils/constants";
@@ -291,9 +291,9 @@ function Event() {
                 if(type === "TV") {
                     if(resultDate === false) {
                         navigate(`/player/${type}/${event}/${eventContent.channels_id}`)
-                        console.log("é TV", eventContent.channels_id)
                     }
                 } else {
+                    //navigate(`/player/${type}/${event}/`)
 
                 }
 

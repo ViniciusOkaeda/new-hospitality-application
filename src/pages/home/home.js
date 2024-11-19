@@ -21,7 +21,7 @@ function Home() {
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const [homepageContent, setHomepageContent] = useState([]);
-
+    console.log("minha home", homepageContent)
     const [activePage, setActivePage] = useState('');
 
     const navigate = useNavigate()
@@ -108,6 +108,7 @@ function Home() {
                 // Se o próximo item existir, move o foco para o próximo item
                 setContainerCount(nextItemIndex);
                 // Tenta manter o foco no mesmo índice de cartão dentro do item
+                console.log("meu buttonref", buttonRefs)
                 console.log("buttonrefs", buttonRefs.current)
                 if (buttonRefs.current[nextItemIndex] && buttonRefs.current[nextItemIndex][cardCount]) {
                     buttonRefs.current[nextItemIndex][cardCount].focus();
@@ -119,27 +120,31 @@ function Home() {
 
                 setTimeout(() => {
                     if (divRef.current) {
-                        const refButtonFocused = buttonRefs.current[containerCount + 1][cardCount]
-
-                        if (refButtonFocused) {
-                            //const lastElement = buttonRefs.current[containerCount + 1].getAttribute('id')
-                            const elementRect = refButtonFocused.getBoundingClientRect();
-
-                            // Distância do topo da div até o topo do elemento focado no conteúdo total
-                            const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;
-
-                            if (containerCount == -1) {
-                                //quando for o primeiro elemento da página irá vir pra cá
-
+                        if(buttonRefs.current[containerCount + 1]) {
+                            const refButtonFocused = buttonRefs.current[containerCount + 1][cardCount]
+    
+                            if (refButtonFocused) {
+                                //const lastElement = buttonRefs.current[containerCount + 1].getAttribute('id')
+                                const elementRect = refButtonFocused.getBoundingClientRect();
+    
+                                // Distância do topo da div até o topo do elemento focado no conteúdo total
+                                const distanceFromTopOfContent = (elementRect.top + divRef.current.scrollTop) - 580;
+    
+                                if (containerCount == -1) {
+                                    //quando for o primeiro elemento da página irá vir pra cá
+    
+                                }
+                                if (containerCount >= 0) {
+                                    divRef.current.scrollTo({
+                                        top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
+                                        //behavior: 'smooth',  // Rolagem suave
+                                    });
+    
+                                }
                             }
-                            if (containerCount >= 0) {
-                                divRef.current.scrollTo({
-                                    top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
-                                    behavior: 'smooth',  // Rolagem suave
-                                });
 
-                            }
                         }
+
                     }
                 }, 100); // Um pequeno delay para garantir que o foco seja aplicado antes da rolagem
 
@@ -189,7 +194,7 @@ function Home() {
                             if (containerCount >= 0) {
                                 divRef.current.scrollTo({
                                     top: distanceFromTopOfContent,  // Rola para cima 700px (ajuste conforme necessário)
-                                    behavior: 'smooth',  // Rolagem suave
+                                    //behavior: 'smooth',  // Rolagem suave
                                 });
 
                             }
@@ -302,6 +307,7 @@ function Home() {
 
     const handleEscape = () => {
         console.log("Escape pressionado");
+
         // Implemente a lógica para quando o usuário pressionar Escape (ex: sair do foco)
     };
 
@@ -361,6 +367,12 @@ function Home() {
             case "category selection":
                 return <RenderCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} model={1} buttonRefs={buttonRefs} />
             case "most watched":
+                return <RenderCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} model={1} buttonRefs={buttonRefs} />
+            case "my list":
+                return <RenderCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} model={1} buttonRefs={buttonRefs} />
+            case "category selection":
+                return <RenderCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} model={1} buttonRefs={buttonRefs} />
+            case "continue watching":
                 return <RenderCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} model={1} buttonRefs={buttonRefs} />
             case "channels":
                 return <RenderChannelsCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} buttonRefs={buttonRefs} />
@@ -477,7 +489,7 @@ function Home() {
                                                     style={{
                                                         backgroundColor: FormatRating(focusedContent.rating)
                                                     }}
-                                                >A{focusedContent.rating}</div>
+                                                >A{focusedContent.rating === 0 ? "L" : focusedContent.rating}</div>
                                                 : ""}
 
 

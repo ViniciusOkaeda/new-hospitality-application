@@ -25,7 +25,7 @@ function AllRoutes() {
                 <Route path="/player/:type/:event/:channel?" element={<Player />} />
 
                 {/* Rota especifica para lives */}
-                <Route path="/player/TV/live/:channel" element={<Player />} />
+                <Route path="/player/TV/LIVE/:channel" element={<Player />} />
 
                 <Route path="/event/:type/:event" element={<Event />}/>
 

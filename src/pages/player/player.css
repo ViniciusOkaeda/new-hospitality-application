@@ -1,48 +1,163 @@
 .bottomMenuContainer {
-    width: 1920px;
-    height: 450px;
-    background-color: red;
-    position: absolute;
+    width: 100%;
+    height: 350px;
+    background-image: 
+    linear-gradient(to bottom,
+     rgba(17, 16, 20, 0.1) 0%,
+     rgba(17, 16, 20, 0.6) 10%,
+     rgba(17, 16, 20, 0.7) 20%,
+     rgba(17, 16, 20, 0.8) 30%,
+     rgba(17, 16, 20, 0.8) 40%,
+     rgba(17, 16, 20, 0.8) 50%,
+     rgba(17, 16, 20, 0.9) 60%,
+     rgba(17, 16, 20, 0.9) 80%);
+        position: absolute;
     z-index: 100000000;
     bottom: 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .bottomMenuTitle {
-    width: 1920px;
-    height: 200px;
-    background-color: blue;
+    width: 90%;
+    height: 120px;
     display: flex;
     flex-direction: column;
+}
+.bottomMenuTitleRow {
+    width: 100%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.bottomMenuTitleRow h3 {
+    margin-right: 10px;
+}
+
+.bottomMenuTitleRow img {
+    margin-right: 10px;
+    max-height: 80%;
+}
+.bottomMenuTitleRow span {
+width: 30px;
+height: 30px;
+padding: 2.5px;
+display: flex;
+justify-content: center;
+align-items: center;
+border-radius: 5px;
 }
 
 
 .bottomMenuTime {
-    width: 1920px;
-    height: 100px;
+    width: 90%;
+    height: 80px;
     background-color: violet;
 }
 .bottomMenuOptions {
-    width: 1920px;
+    width: 90%;
     height: 100px;
-    background-color: green;
     display: flex;
     justify-content: space-between;
 }
 
-.bottomOptionsButtonContainer1 {
-min-width: 15%;
+.bottomOptionsButtonContainer {
     height: 100%;
-    background-color: purple;
+    display: flex;
+    justify-content: space-between;
 }
-.bottomOptionsButtonContainer2 {
-    width: 20%;
-    height: 100%;
-    background-color: purple;
+
+.bottomButtonDiv {
+    width: 60px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.bottomOptionsButtonContainer3 {
-    width: 20%;
+.bottomButtonDivLive {
+    width: 160px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bottomButtonDivText {
+position: absolute;
+z-index: 1;
+bottom: 13%;
+}
+
+.bottomMinWidth1 {
+    min-width: 15%;
+}
+
+.bottomMinWidth2 {
+    min-width: 28%;
+}
+.bottomMinWidth3 {
+    min-width: 9%;
+}
+
+.bottomOptionsButton {
+    height: 60px;
+    background-color: rgba(0, 0, 0, 0);
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.bottomOptionsButtonAdditional {
+    width: 60px;
+    border-radius: 100%;
+}
+
+.bottomOptionsButtonWithText {
+    width: 160px;
+    padding: 0 5px;
+    border-radius: 25px;
+}
+
+.bottomOptionsButtonLiveCircle {
+    width: 12px;
+    height: 12px;
+    border-radius: 100%;
+    border: 2px solid white;
+    padding: 3px;
+}
+
+.liveCircle {
+    width: 100%;
     height: 100%;
-    background-color: purple;
+    border-radius: 100%;
+}
+
+.liveCircleColor {
+    width: 100%;
+    height: 100%;
+    background-color: red;
+    border-radius: 100%;
+}
+
+.bottomOptionsButtonImage {
+    max-height: 50%;
+    opacity: 0.8;
+}
+
+.bottomOptionsButtonImageMarginLeft {
+    margin-left: 5px;
+}
+
+.bottomOptionsButton:focus-within {
+    background-color: #565656;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
+    font-weight: bold;
+    transition-timing-function: ease-in;
+}
+
+.bottomOptionsButton:focus .displayNone {
+    display: block;
 }

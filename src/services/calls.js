@@ -17,8 +17,8 @@ export const LoginMotv = async (navigate) => {
 
 
     try {
-        const response = await api.post('loginMoTV', {login, password, vendors_id});
-        if(response.data.status === 1) {
+        const response = await api.post('loginMoTV', { login, password, vendors_id });
+        if (response.data.status === 1) {
             console.log("deu 1")
             localStorage.setItem("authorization", response.data.response.customers_token);
             navigate('/profile')
@@ -40,7 +40,7 @@ export const LoginMotvWithToken = async (navigate) => {
     const customers_token = token;
 
     try {
-        const response = await api.post('loginMoTVWithToken', {token, customers_token});
+        const response = await api.post('loginMoTVWithToken', { token, customers_token });
         return response.data;
     } catch (error) {
         console.error('Failed to fetch data:', error);
@@ -56,7 +56,7 @@ export const GetHomepageV2 = async () => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('getHomepageV2', 
+        const response = await api.post('getHomepageV2',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -81,7 +81,7 @@ export const GetEventRequestVod = async (eventId) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('getDataV2', 
+        const response = await api.post('getDataV2',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -106,7 +106,7 @@ export const GetEventRequestTv = async (eventId) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('getUpdatedEventsV2', 
+        const response = await api.post('getUpdatedEventsV2',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -131,7 +131,7 @@ export const GetEventRecomendationRequest = async (eventId, type) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('getEventRecommendationRows', 
+        const response = await api.post('getEventRecommendationRows',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -158,7 +158,7 @@ export const GetRecordingsByProfileV2 = async () => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('getRecordingsByProfileV2', 
+        const response = await api.post('getRecordingsByProfileV2',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -182,7 +182,7 @@ export const AddRecordingV2 = async (eventId) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('addRecordingV2', 
+        const response = await api.post('addRecordingV2',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -206,7 +206,7 @@ export const RemoveRecording = async (eventId) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('removeRecording', 
+        const response = await api.post('removeRecording',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -232,7 +232,7 @@ export const GetMyListFull = async () => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('getMyListFull', 
+        const response = await api.post('getMyListFull',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -255,7 +255,7 @@ export const AddToMyList = async (eventId, type) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('addToMyList', 
+        const response = await api.post('addToMyList',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -280,7 +280,7 @@ export const RemoveFromMyList = async (eventId, type) => {
     const devicesType = await GetDevicesType();
 
     try {
-        const response = await api.post('removeFromMyList', 
+        const response = await api.post('removeFromMyList',
             {
                 authorization: 'Bearer ' + auth,
                 includeData: true,
@@ -292,6 +292,66 @@ export const RemoveFromMyList = async (eventId, type) => {
             }
         );
         return response.data;
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+
+export const GetStreamChannelUrlV3 = async (channels_id, type, type_rep, eventTimestamp) => {
+    const auth = localStorage.getItem("authorization");
+    const profile = sessionStorage.getItem("profileid");
+    const language = await GetLanguage();
+    const devicesType = await GetDevicesType();
+
+    try {
+        if (type_rep === "LIVE") {
+
+        } else {
+            const response = await api.post('getStreamChannelUrlV3',
+                {
+                    authorization: 'Bearer ' + auth,
+                    channelsId: parseInt(channels_id),
+                    profileId: profile,
+                    devicesType: devicesType,
+                    includeData: true,
+                    language: language,
+                    live: false,
+                    timestamp: Date.parse(eventTimestamp) / 1000,
+                    type: type
+                }
+            );
+            return response.data;
+        }
+
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+
+export const GetStreamVodUrlV3 = async (vods_id, type) => {
+    const auth = localStorage.getItem("authorization");
+    const profile = sessionStorage.getItem("profileid");
+    const language = await GetLanguage();
+    const devicesType = await GetDevicesType();
+
+    try {
+        const response = await api.post('getStreamVodUrlV3',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType,
+                vodsId: parseInt(vods_id),
+                type: type
+            }
+        );
+        return response.data;
+
     } catch (error) {
         console.error('Failed to fetch data:', error);
         throw error;
