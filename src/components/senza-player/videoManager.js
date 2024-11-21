@@ -9,7 +9,7 @@ export class VideoManager {
   init(videoElement, drmServer) {
     this.player = new UnifiedPlayer(videoElement, this.videoParams);
     //console.log("meu video params no construtor da class VideoManager", this.videoParams)
-    console.log("meu player", this.player)
+    //console.log("meu player", this.player)
     var drmServer = 'https://mw.yplay.com.br/widevine_proxy'
     if (drmServer) {
       var devices_type = 'webos';

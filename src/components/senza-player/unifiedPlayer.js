@@ -55,13 +55,13 @@ export class UnifiedPlayer extends EventTarget {
     super();
     shaka.polyfill.installAll();
     this.videoElement = videoElement;
-    console.log("meu video element", this.videoElement)
+    //console.log("meu video element", this.videoElement)
     this.localPlayer = new shaka.Player(this.videoElement);
-    console.log("meu local player", this.localPlayer)
+    //console.log("meu local player", this.localPlayer)
     this.remotePlayer = remotePlayer;
-    console.log("meu remote player", this.remotePlayer)
+    //console.log("meu remote player", this.remotePlayer)
     this.videoParams = videoParams;
-    console.log("o videoParams no Unified Class", this.videoParams)
+    //console.log("o videoParams no Unified Class", this.videoParams)
     this.isInRemotePlayback = false;
 
     if (this.remotePlayer.attach) {
@@ -72,13 +72,13 @@ export class UnifiedPlayer extends EventTarget {
 
     // Remote player events
     this.remotePlayer.addEventListener("ended", () => {
-      console.log("remotePlayer ended");
+     // console.log("remotePlayer ended");
       lifecycle.moveToForeground();
       this.dispatchEvent(new Event("ended"));
     });
 
     this.remotePlayer.addEventListener("error", (event) => {
-      console.log("remotePlayer error:", event.detail.errorCode, event.detail.message);
+      //console.log("remotePlayer error:", event.detail.errorCode, event.detail.message);
       this.dispatchEvent(new CustomEvent("error", event));
     });
 
@@ -86,7 +86,7 @@ export class UnifiedPlayer extends EventTarget {
       if (!this.isInRemotePlayback) {
         return;
       }
-      console.log("remotePlayer timeupdate");
+      //console.log("remotePlayer timeupdate");
       this.videoElement.currentTime = this.remotePlayer.currentTime;
       this.dispatchEvent(new Event("timeupdate"));
     });
@@ -94,12 +94,12 @@ export class UnifiedPlayer extends EventTarget {
 
     // Local player events
     this.videoElement.addEventListener("ended", () => {
-      console.log("localPlayer ended");
+      //console.log("localPlayer ended");
       this.dispatchEvent(new Event("ended"));
     });
 
     this.localPlayer.addEventListener("error", (event) => {
-      console.log("localPlayer error:", event.detail.errorCode, event.detail.message);
+      //console.log("localPlayer error:", event.detail.errorCode, event.detail.message);
       this.dispatchEvent(new CustomEvent("error", event));
     });
 
@@ -107,33 +107,33 @@ export class UnifiedPlayer extends EventTarget {
       if (this.isInRemotePlayback) {
         return;
       }
-      console.log("localPlayer timeupdate");
+      //console.log("localPlayer timeupdate");
       this.remotePlayer.currentTime = this.videoElement.currentTime;
       this.dispatchEvent(new Event("timeupdate"));
     });
 
     this.videoElement.addEventListener("canplay", () => {
-      console.log("localPlayer canplay");
+      //console.log("localPlayer canplay");
       this.dispatchEvent(new Event("canplay"));
     });
 
     this.videoElement.addEventListener("waiting", () => {
-      console.log("localPlayer waiting");
+      //console.log("localPlayer waiting");
       this.dispatchEvent(new Event("waiting"));
     });
 
     this.videoElement.addEventListener("seeking", () => {
-      console.log("localPlayer seeking");
+      //console.log("localPlayer seeking");
       this.dispatchEvent(new Event("seeking"));
     });
 
     this.videoElement.addEventListener("seeked", () => {
-      console.log("localPlayer seeked");
+      //console.log("localPlayer seeked");
       this.dispatchEvent(new Event("seeked"));
     });
 
     this.videoElement.addEventListener("loadedmetadata", () => {
-      console.log("localPlayer loadedmetadata");
+      //console.log("localPlayer loadedmetadata");
       this.dispatchEvent(new Event("loadedmetadata"));
     });
 
@@ -308,12 +308,12 @@ export class UnifiedPlayer extends EventTarget {
     });
 
     const networkingEngine = this.localPlayer.getNetworkingEngine();
-    console.log("meu networkingEngine", networkingEngine)
+    //console.log("meu networkingEngine", networkingEngine)
 
     networkingEngine.registerRequestFilter((type, request) => {
-      console.log("meu type", type)
-      console.log("meu request", request)
-      console.log("meu shaka net", shaka.net.NetworkingEngine.RequestType.LICENSE)
+      //console.log("meu type", type)
+      //console.log("meu request", request)
+      //console.log("meu shaka net", shaka.net.NetworkingEngine.RequestType.LICENSE)
       var StringUtils = shaka.util.StringUtils;
       var Uint8ArrayUtils = shaka.util.Uint8ArrayUtils;
       
@@ -334,15 +334,15 @@ export class UnifiedPlayer extends EventTarget {
 
         var wrappedJson = JSON.stringify(wrapped);
         request.body = StringUtils.toUTF8(wrappedJson);
-        console.log("passei do if type e shaka")
+        //console.log("passei do if type e shaka")
 
       }
     });
 
     networkingEngine.registerResponseFilter((type, response) => {
-      console.log("o registro de resposta de filtro", type)
-      console.log("o registro de type de filtro", response)
-      console.log("o response de shaka", shaka.net.NetworkingEngine.RequestType.LICENSE)
+      //console.log("o registro de resposta de filtro", type)
+      //console.log("o registro de type de filtro", response)
+      //console.log("o response de shaka", shaka.net.NetworkingEngine.RequestType.LICENSE)
       var StringUtils = shaka.util.StringUtils;
       var Uint8ArrayUtils = shaka.util.Uint8ArrayUtils;
       if (type === shaka.net.NetworkingEngine.RequestType.LICENSE) {
@@ -351,12 +351,12 @@ export class UnifiedPlayer extends EventTarget {
         var rawLicense = wrapped.rawLicense;
         response.data = Uint8ArrayUtils.fromBase64(rawLicense);
 
-        console.log("o response data dentro do register", response.data)
+        //console.log("o response data dentro do register", response.data)
       }
     });
 
     this.remotePlayer.addEventListener("license-request", async (event) => {
-      console.log("remotePlayer", "license-request", "Got license-request event from remote player");
+      //console.log("remotePlayer", "license-request", "Got license-request event from remote player");
 
       // Extract license body from event
       const requestBuffer = event?.detail?.licenseRequest;

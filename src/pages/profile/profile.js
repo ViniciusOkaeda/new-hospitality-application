@@ -93,7 +93,10 @@ function Profile() {
                             setContainerCount(prev => {
                                 const newCount = prev + 1;
                                 // Focar no próximo card (resetando cardCount se necessário)
-                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
+                                setTimeout(() => {
+                                    selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
+
+                                }, 10);
                                 return newCount;
 
                             });

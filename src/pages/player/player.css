@@ -54,8 +54,70 @@ border-radius: 5px;
 .bottomMenuTime {
     width: 90%;
     height: 80px;
-    background-color: violet;
-}
+}.bottomMenuTime {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  
+  .time-display {
+    margin-left: -100px;
+    margin-bottom: 5px; /* Espaço entre o currentTime e a barra */
+    font-size: 14px;
+    color: #fff;
+    position: relative;
+    width: 99%;
+  }
+  
+  .progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Cria o espaçamento entre a barra e a duração */
+    width: 99%; /* Garante que ocupe 100% do espaço disponível */
+  }
+  
+  .progress-bar-container {
+    position: relative;
+    width: 99%; /* Barra de progresso ocupa 80% do espaço disponível */
+    height: 12px;
+    background-color: #2a2a2a;
+    border-radius: 5px;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 5px;
+  }
+  
+  .progress-button {
+    position: absolute;
+    top: -7px; /* Ajuste para que o botão fique acima da barra */
+    margin-left: -5px;
+    width: 24px;
+    height: 24px;
+    background-color: #f6f6f6;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: left 0.1s ease;
+  }
+  
+  .duration-display {
+    margin-left: 20px; /* Adiciona um pequeno espaçamento à direita da barra de progresso */
+    font-size: 14px;
+    color: #fff;
+  }
+  
+  
+  
+  
+  
+  
+  
+
+
+
 .bottomMenuOptions {
     width: 90%;
     height: 100px;

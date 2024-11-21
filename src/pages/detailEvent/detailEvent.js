@@ -12,8 +12,6 @@ import AddRecordingImage from "../../images/button-rec.png"
 import RemoveRecordingImage from "../../images/button-norec.png"
 import Play from "../../images/play-button.png"
 import { RenderRecomendationCards } from "../../components/cards/cards";
-import { CountdownMessage } from "../../components/count-message/countDownMessage"
-
 
 
 function Event() {
@@ -35,6 +33,23 @@ function Event() {
     const divRef = useRef([])
     const buttonsRef = useRef([])
     const recomendationsRef = useRef([])
+
+    const handleButtonRef = (index, el) => {
+        // Garantir que o array esteja inicializado
+        if (!divRef.current[0]) {
+            divRef.current[0] = [];
+        }
+        divRef.current[0][index] = el;
+    };
+
+    useEffect(() => {
+        if (!divRef.current[0]) {
+            divRef.current[0] = [];
+        }
+        if (!divRef.current[1]) {
+            divRef.current[1] = [];
+        }
+    }, []);
 
     const isFutureDate = (dateString) => {
         // Cria um objeto Date a partir da string
@@ -182,10 +197,14 @@ function Event() {
             let nextItemIndex = containerCount + 1;
             setContainerCount(nextItemIndex);
             if (nextItemIndex === 0) {
-                console.log("opa")
-                if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
-                    divRef.current[nextItemIndex][buttonCount].focus();
-                }
+                console.log("opa", divRef)
+                setTimeout(() => {
+                    // Certifique-se de que divRef.current[0][0] existe e focá-lo
+                    if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                        console.log("Focando o primeiro item de divRef.current[0][0]");
+                        divRef.current[nextItemIndex][buttonCount].focus();
+                                        }
+                }, 10);
             } else if (nextItemIndex === 1) {
 
                 if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
@@ -288,14 +307,22 @@ function Event() {
 
         if (containerCount === 0) {
             if (buttonCount === 0) {
-                if(type === "TV") {
-                    if(resultDate === false) {
-                        navigate(`/player/${type}/${event}/${eventContent.channels_id}`)
+
+                if (divRef.current[0] && divRef.current[0][buttonCount]) {
+                    if(type === "TV") {
+                        if(resultDate === false) {
+                            //navigate(`/player/${type}/${event}/${eventContent.channels_id}`)
+                            window.location.href = `/player/${type}/${event}/${eventContent.channels_id}`;
+                        }
+                    } else {
+                        //navigate(`/player/${type}/${event}/`)
+                        window.location.href = `/player/${type}/${event}`;
                     }
                 } else {
-                    //navigate(`/player/${type}/${event}/`)
-
+                    console.log("referencia nao encontrada")
                 }
+
+
 
             } else if (buttonCount === 1) {
                 const myCheck = CheckIfHaveList(myList, type, event)
@@ -328,8 +355,9 @@ function Event() {
 
         } else if (containerCount === 1) {
             console.log("o recomendado com foco", focusedRecomendation)
-            navigate(`/event/${focusedRecomendation.type}/${focusedRecomendation.id}`, { replace: true });
-            window.location.reload()
+            //navigate(`/event/${focusedRecomendation.type}/${focusedRecomendation.id}`, { state: { key: Date.now() } });
+            window.location.href = `/event/${focusedRecomendation.type}/${focusedRecomendation.id}`;
+            //window.location.reload()
             //handleRedirect(focusedRecomendation.type, focusedRecomendation.id)
             //navigate(`/event/${focusedRecomendation.type}/${focusedRecomendation.id}`)
 
@@ -340,6 +368,9 @@ function Event() {
     const handleEscape = () => {
         console.log("Escape pressionado");
         window.history.back()
+        setTimeout(() => {
+            window.location.reload()
+          }, 100);
         // Implemente a lógica para quando o usuário pressionar Escape (ex: sair do foco)
     };
 
@@ -361,6 +392,9 @@ function Event() {
         onEnter: () => handleEnter(),
         onEscape: () => handleEscape(),
     });
+
+
+
     return (
         <>
             {loading ? (
@@ -503,13 +537,7 @@ function Event() {
                                     resultDate === true ? 
                                 <button
                                     className="buttonWithImage"
-                                    ref={(el) => {
-                                        // Armazena a referência de cada botão
-                                        if (!divRef.current[0]) {
-                                            divRef.current[0] = [];
-                                        }
-                                        divRef.current[0][0] = el;
-                                    }}
+                                    ref={(el) => handleButtonRef(0, el)}
                                 >
                                     <img className="buttonWithImageSize2" src={FutureIcon}></img>
 
@@ -520,13 +548,7 @@ function Event() {
 
                                 <button
                                     className="buttonWithImage"
-                                    ref={(el) => {
-                                        // Armazena a referência de cada botão
-                                        if (!divRef.current[0]) {
-                                            divRef.current[0] = [];
-                                        }
-                                        divRef.current[0][0] = el;
-                                    }}
+                                    ref={(el) => handleButtonRef(0, el)}
                                 >
                                     <img className="buttonWithImageSize" src={Play}></img>
 
@@ -535,13 +557,7 @@ function Event() {
                                 :
                                 <button
                                     className="buttonWithImage"
-                                    ref={(el) => {
-                                        // Armazena a referência de cada botão
-                                        if (!divRef.current[0]) {
-                                            divRef.current[0] = [];
-                                        }
-                                        divRef.current[0][0] = el;
-                                    }}
+                                    ref={(el) => handleButtonRef(0, el)}
                                 >
                                     <img className="buttonWithImageSize" src={Play}></img>
 
@@ -554,13 +570,7 @@ function Event() {
 
 
                                 <button className="buttonWithImage"
-                                    ref={(el) => {
-                                        // Armazena a referência de cada botão
-                                        if (!divRef.current[0]) {
-                                            divRef.current[0] = [];
-                                        }
-                                        divRef.current[0][1] = el;
-                                    }}
+                                    ref={(el) => handleButtonRef(1, el)}
 
                                 >
                                     {CheckIfHaveList(myList, type, event) === true ?
@@ -582,13 +592,7 @@ function Event() {
 
                                 {type === "TV" && (
                                     <button className="buttonWithImage"
-                                        ref={(el) => {
-                                            // Armazena a referência de cada botão
-                                            if (!divRef.current[0]) {
-                                                divRef.current[0] = [];
-                                            }
-                                            divRef.current[0][2] = el;
-                                        }}
+                                    ref={(el) => handleButtonRef(2, el)}
                                     >
                                         {CheckIfHaveRecording(myRecordings, event) === true
                                             ?
