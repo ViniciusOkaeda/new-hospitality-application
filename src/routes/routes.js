@@ -7,6 +7,10 @@ import Home from "../pages/home/home";
 import Event from "../pages/detailEvent/detailEvent";
 import Channel from "../pages/channel/channel";
 import Guide from "../pages/guide/guide";
+import Vod from "../pages/vod/vod";
+import Search from "../pages/search/search";
+import Catchup from "../pages/catchup/catchup";
+import Favorite from "../pages/favorite/favorite";
 
 function AllRoutes() {
 
@@ -21,6 +25,11 @@ function AllRoutes() {
                 <Route path="/guide" element={<Guide />} />    
                 <Route path="/home" element={<Home />} />
                 <Route path="/channel" element={<Channel />} />
+                <Route path="/vod" element={<Vod />} />
+                <Route path="/search" element={<Search />} />
+                <Route path="/catchup" element={<Catchup />} />
+                <Route path="/favorite" element={<Favorite />} />
+
 
                 <Route path="/player/:type/:event/:channel?" element={<Player />} />
 

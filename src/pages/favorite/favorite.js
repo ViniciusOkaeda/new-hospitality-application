@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import './channel.css';
+import './favorite.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ import { useKeyNavigation } from "../../utils/newNavigation";
 import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest } from "../../components/cards/cards";
 
 
-function Channel() {
+function Favorite() {
     const [enableArrows, setEnableArrows] = useState(false)
 
     console.log("o window", window.location)
@@ -255,4 +255,4 @@ function Channel() {
 }
 
 
-export default Channel;
+export default Favorite;
