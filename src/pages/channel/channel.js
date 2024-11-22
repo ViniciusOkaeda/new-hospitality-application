@@ -3,7 +3,7 @@ import './channel.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
-import { GetSubscribedAndLockedChannels } from "../../services/calls";
+import { GetChannelCategories, GetSubscribedAndLockedChannels, GetFavoriteChannels, GetLiveChannelEvents } from "../../services/calls";
 import { GetTodayDate, FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
 import { Menu } from "../../components/menu/menu";
 import { useKeyNavigation } from "../../utils/newNavigation";
@@ -13,7 +13,6 @@ import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest
 function Channel() {
     const [enableArrows, setEnableArrows] = useState(false)
 
-    console.log("o window", window.location)
     const [isLoaded, setIsLoaded] = useState(false); // Estado para controlar o carregamento
 
 
@@ -21,14 +20,15 @@ function Channel() {
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const [homepageContent, setHomepageContent] = useState([]);
-    console.log("minha home", homepageContent)
     const [activePage, setActivePage] = useState('');
 
     const navigate = useNavigate()
 
     const [haveFocusedEvent, setHaveFocusedEvent] = useState(false);
-    const [focusedContent, setFocusedContent] = useState([])
-
+    const [subcribedChannels, setSubscribedChannels] = useState([])
+    const [channelCategories, setChannelCategories] = useState([])
+    const [favoriteChannels, setFavoriteChannels] = useState([])
+    const [liveEventChannels, setLiveEventChannels] = useState([])
     const model = 1 //auxiliar para nao precisar focar e exibir cards
 
 
@@ -45,7 +45,26 @@ function Channel() {
                 const result = await GetSubscribedAndLockedChannels();
                 if (result) {
                     if (result.status === 1) {
-                        setHomepageContent(result.response)
+                        setSubscribedChannels(result.response)
+                        const resultCategories = await GetChannelCategories();
+                        if (resultCategories) {
+                            if (resultCategories.status === 1) {
+                                setChannelCategories(result.response)
+                                const resultFavoriteChannels = await GetFavoriteChannels();
+                                if (resultFavoriteChannels) {
+                                    if (resultFavoriteChannels.status === 1) {
+                                        setFavoriteChannels(result.response)
+                                        const resultLiveEvents = await GetLiveChannelEvents();
+                                        if (resultLiveEvents) {
+                                            if (resultLiveEvents.status === 1) {
+                                                setLiveEventChannels(result.response)
+                                                
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             } catch (err) {

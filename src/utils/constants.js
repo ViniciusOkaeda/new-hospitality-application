@@ -11,10 +11,25 @@ export const GetLanguage = () => {
 }
 
 export const GetTodayDate = () => {
-    const currentDateTime = new Date();
-    const formattedDateTime = currentDateTime.toISOString().slice(0, 19);
-
-    return formattedDateTime
+// Ajusta a data para o fuso horário de São Paulo
+const currentDateTime = new Date();
+const options = {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+  
+  const dateFormatter = new Intl.DateTimeFormat('en-GB', options);
+  const formattedDate = dateFormatter.format(currentDateTime);
+  
+  // Convertendo para o formato ISO 8601 esperado (YYYY-MM-DDTHH:mm:ss)
+  const isoDateTime = formattedDate.replace(',', '').replace(/\//g, '-').replace(' ', 'T');
+  
+    return isoDateTime
 }
 
 export const CheckIfHaveList = (myList, type, event) => {

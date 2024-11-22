@@ -1,11 +1,12 @@
 import api from "./api"
 import { useNavigate, useParams } from "react-router-dom";
-import { GetDevicesType, GetLanguage } from "../utils/constants";
+import { GetDevicesType, GetLanguage, GetTodayDate } from "../utils/constants";
 
 export const auth = localStorage.getItem("authorization");
 export const profile = sessionStorage.getItem("profileid");
 export const language = await GetLanguage();
 export const devicesType = await GetDevicesType();
+export const stringTodayDate = await GetTodayDate();
 
 
 export const LoginMotv = async (navigate) => {
@@ -309,10 +310,89 @@ export const GetStreamVodUrlV3 = async (vods_id, type) => {
 
 
 export const GetSubscribedAndLockedChannels = async () => {
+    try {
+        const response = await api.post('getSubscribedAndLockedChannels',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType,
+
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
 
 
-    return auth
 
+}
+
+export const GetChannelCategories = async () => {
+    try {
+        const response = await api.post('getChannelCategories',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType,
+                timestamp: 0
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+export const GetFavoriteChannels = async () => {
+    try {
+        const response = await api.post('getFavoriteChannels',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType,
+                timestamp: 0
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+export const GetLiveChannelEvents = async () => {
+    try {
+        const response = await api.post('getEpgUpdatedEventsV2',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType,
+                liveOnly: true,
+                timestamp: 0,
+                from: stringTodayDate,
+                to: stringTodayDate
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
 }
 
 
