@@ -13,6 +13,11 @@ overflow: auto;
 box-sizing: border-box;
 }
 
+.channelsContent {
+    width: 100%;
+    height: 880px;
+}
+
 .categoriesContent::-webkit-scrollbar {
     display: none;
 }
@@ -37,11 +42,12 @@ box-shadow: none;
 
 .channelsContainer {
     width: 1880px;
-    min-height: 890px;
-    height: 100%;
+    height: 890px;
     display: flex;
     flex-wrap: wrap;
+    overflow-x: hidden;
 }
+
 
 .channelsButton {
 width: 420px;
