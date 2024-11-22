@@ -2,8 +2,8 @@ import api from "./api"
 import { useNavigate, useParams } from "react-router-dom";
 import { GetDevicesType, GetLanguage, GetTodayDate } from "../utils/constants";
 
-export const auth = localStorage.getItem("authorization");
-export const profile = sessionStorage.getItem("profileid");
+export const auth = await localStorage.getItem("authorization");
+export const profile = await sessionStorage.getItem("profileid");
 export const language = await GetLanguage();
 export const devicesType = await GetDevicesType();
 export const stringTodayDate = await GetTodayDate();

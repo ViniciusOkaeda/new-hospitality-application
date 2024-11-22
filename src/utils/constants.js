@@ -32,6 +32,34 @@ const options = {
     return isoDateTime
 }
 
+export const GetProgressPercentage = (start, end) => {
+    const startDate = new Date(start); // Data de início do evento
+    const endDate = new Date(end);     // Data de término do evento
+    const currentDate = new Date();    // Hora atual
+
+    // Calcular a duração total do evento (em milissegundos)
+    const totalDuration = endDate - startDate;
+    
+    // Se o evento ainda não começou, o progresso é 0%
+    if (currentDate < startDate) {
+      return 0;
+    }
+
+    // Se o evento já terminou, o progresso é 100%
+    if (currentDate > endDate) {
+      return 100;
+    }
+
+    // Calcular o tempo decorrido até o momento atual (em milissegundos)
+    const elapsedTime = currentDate - startDate;
+
+    // Calcular a porcentagem de progresso (tempo decorrido / duração total)
+    const progress = (elapsedTime / totalDuration) * 100;
+
+    // Retornar o valor de progresso entre 0 e 100
+    return Math.min(100, Math.max(0, progress));
+}
+
 export const CheckIfHaveList = (myList, type, event) => {
     const checkTypeInList = myList.filter(item => item.type === type)
     const checkEventInList = checkTypeInList.filter(item => item.id === parseInt(event))
@@ -111,6 +139,12 @@ export const FormatDuration = (duration) => {
 
 export const FormatDescriptionLength = (description) => {
     const formatedDescription = description.length <= 175 ? description : description.substring(0, 175) + "...";
+
+    return formatedDescription;
+}
+
+export const FormatChannelTitleLength = (title) => {
+    const formatedDescription = title.length <= 19 ? title : title.substring(0, 19) + "";
 
     return formatedDescription;
 }

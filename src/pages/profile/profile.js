@@ -22,7 +22,8 @@ function Profile() {
         sessionStorage.setItem("profileid", btoa(profiles_id));
         localStorage.setItem("profileimage", profile_image);
         localStorage.setItem("profilename", profiles_name);
-        navigate('/home');
+        //navigate('/home');
+        window.location.href = `/home`;
     }
 
     useEffect(() => {

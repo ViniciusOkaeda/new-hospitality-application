@@ -4,7 +4,7 @@ import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
 import { GetChannelCategories, GetSubscribedAndLockedChannels, GetFavoriteChannels, GetLiveChannelEvents } from "../../services/calls";
-import { GetTodayDate, FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
+import { GetTodayDate, FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages, GetProgressPercentage, FormatChannelTitleLength } from "../../utils/constants";
 import { Menu } from "../../components/menu/menu";
 import { useKeyNavigation } from "../../utils/newNavigation";
 import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest } from "../../components/cards/cards";
@@ -31,6 +31,8 @@ function Channel() {
     const [liveEventChannels, setLiveEventChannels] = useState([])
     const model = 1 //auxiliar para nao precisar focar e exibir cards
 
+    const [categoryToFilter, setCategoryToFilter] = useState(null)
+
 
     const divRef = useRef(null); // Ref para a div que você deseja medir
 
@@ -49,17 +51,16 @@ function Channel() {
                         const resultCategories = await GetChannelCategories();
                         if (resultCategories) {
                             if (resultCategories.status === 1) {
-                                setChannelCategories(result.response)
+                                console.log("o result categories", resultCategories)
+                                setChannelCategories(resultCategories.response)
                                 const resultFavoriteChannels = await GetFavoriteChannels();
                                 if (resultFavoriteChannels) {
                                     if (resultFavoriteChannels.status === 1) {
-                                        setFavoriteChannels(result.response)
+                                        setFavoriteChannels(resultFavoriteChannels.response)
                                         const resultLiveEvents = await GetLiveChannelEvents();
                                         if (resultLiveEvents) {
-                                            if (resultLiveEvents.status === 1) {
-                                                setLiveEventChannels(result.response)
-                                                
-                                            }
+                                            setLiveEventChannels(resultLiveEvents.map(e => e.content))
+
                                         }
                                     }
                                 }
@@ -139,7 +140,7 @@ function Channel() {
                 setCardCount(previousCardIndex);
                 if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][previousCardIndex]) {
                     buttonRefs.current[containerCount][previousCardIndex].focus();
-                    buttonRefs.current[containerCount][previousCardIndex].scrollIntoView({behavior: "auto", block: "nearest", inline: "center" })
+                    buttonRefs.current[containerCount][previousCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
                 }
             } else {
                 // Se previousCardIndex for -1, desfocamos o card e focamos no menu
@@ -178,7 +179,7 @@ function Channel() {
             if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][nextCardIndex]) {
                 setCardCount(nextCardIndex);
                 buttonRefs.current[containerCount][nextCardIndex].focus();
-                buttonRefs.current[containerCount][nextCardIndex].scrollIntoView({behavior: "auto", block: "nearest", inline: "center" })
+                buttonRefs.current[containerCount][nextCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
             }
         }
     };
@@ -250,15 +251,58 @@ function Channel() {
                     />
 
 
-                    <div
-                        className="cardRows"
-                        ref={divRef}
+                    <div className="categoriesContainer">
+                        <div className="categoriesContent">
 
-                        style={{
-                            maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
-                        }}
-                    >
+                            <button className="categoriesButton" 
+                            style={{
+                                backgroundColor: categoryToFilter === null ? "red" : "rgba(0, 0, 0, 0)"
+                            }}
+                            ><h4>Todos</h4></button>
+                            {channelCategories.map((category, idx) => {
+                                return (
+                                    <button
+                                        className="categoriesButton"
+                                        key={idx}
+                                    >
+                                        <h4>{category.channels_categories_name}</h4>
+                                    </button>
+                                )
+                            })}
 
+                        </div>
+                    </div>
+                    <div className="channelsContainer paddingLeftDefault">
+                        {console.log("o live event", liveEventChannels)}
+                        {subcribedChannels.map((channel, idx) => {
+                            const channelEvent = liveEventChannels.filter(item => item.channels_id === channel.channels_id)
+                            const progressPercentage = GetProgressPercentage(channelEvent[0].start, channelEvent[0].end)
+                            const backgroundColor = `linear-gradient(to right, red ${progressPercentage}%, rgb(29, 29, 29) ${progressPercentage}%)`;
+
+
+                            return (
+                                <button
+                                    key={idx}
+                                    className="channelsButton"
+                                >
+                                    <div className="channelDetails">
+                                        <div className="channelDetailsLogo">
+                                            <img src={channel.channels_logo} className="channelDetailsLogoImg"></img>
+                                        </div>
+                                        <div className="channelDetailsText">
+                                            <h5>{FormatChannelTitleLength(channel.channels_name)}</h5>
+                                            <h6>{channelEvent[0].title}</h6>
+                                        </div>
+                                    </div>
+
+                                    <div className="channelsTimeReproduced"
+                                        style={{
+                                            background: backgroundColor,  // Cor de fundo dinâmica com base no progresso
+                                        }}
+                                    ></div>
+                                </button>
+                            )
+                        })}
                     </div>
 
 
