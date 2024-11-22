@@ -10,6 +10,13 @@ export const GetLanguage = () => {
     return language
 }
 
+export const GetTodayDate = () => {
+    const currentDateTime = new Date();
+    const formattedDateTime = currentDateTime.toISOString().slice(0, 19);
+
+    return formattedDateTime
+}
+
 export const CheckIfHaveList = (myList, type, event) => {
     const checkTypeInList = myList.filter(item => item.type === type)
     const checkEventInList = checkTypeInList.filter(item => item.id === parseInt(event))

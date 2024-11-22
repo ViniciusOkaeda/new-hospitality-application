@@ -3,8 +3,8 @@ import './channel.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
-import { GetHomepageV2 } from "../../services/calls";
-import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
+import { GetSubscribedAndLockedChannels } from "../../services/calls";
+import { GetTodayDate, FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
 import { Menu } from "../../components/menu/menu";
 import { useKeyNavigation } from "../../utils/newNavigation";
 import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest } from "../../components/cards/cards";
@@ -42,7 +42,7 @@ function Channel() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const result = await GetHomepageV2();
+                const result = await GetSubscribedAndLockedChannels();
                 if (result) {
                     if (result.status === 1) {
                         setHomepageContent(result.response)

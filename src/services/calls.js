@@ -2,8 +2,10 @@ import api from "./api"
 import { useNavigate, useParams } from "react-router-dom";
 import { GetDevicesType, GetLanguage } from "../utils/constants";
 
-
-
+export const auth = localStorage.getItem("authorization");
+export const profile = sessionStorage.getItem("profileid");
+export const language = await GetLanguage();
+export const devicesType = await GetDevicesType();
 
 
 export const LoginMotv = async (navigate) => {
@@ -50,10 +52,6 @@ export const LoginMotvWithToken = async (navigate) => {
 
 //call para retornar todos os eventos da homepage
 export const GetHomepageV2 = async () => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('getHomepageV2',
@@ -75,10 +73,6 @@ export const GetHomepageV2 = async () => {
 
 //call para retornar detalhes específicos de um evento único (VOD)
 export const GetEventRequestVod = async (eventId) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('getDataV2',
@@ -100,10 +94,6 @@ export const GetEventRequestVod = async (eventId) => {
 }
 //call para retornar detalhes específicos de um evento único (TV)
 export const GetEventRequestTv = async (eventId) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('getUpdatedEventsV2',
@@ -125,10 +115,6 @@ export const GetEventRequestTv = async (eventId) => {
 }
 //call para retornar recomendações de eventos similares ao getEventRequest (VOD E TV)
 export const GetEventRecomendationRequest = async (eventId, type) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('getEventRecommendationRows',
@@ -152,10 +138,6 @@ export const GetEventRecomendationRequest = async (eventId, type) => {
 
 //call para eventos gravados (opção disponivel apenas para eventos TV)
 export const GetRecordingsByProfileV2 = async () => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('getRecordingsByProfileV2',
@@ -175,11 +157,6 @@ export const GetRecordingsByProfileV2 = async () => {
 }
 //call para gravar eventos (opção disponivel apenas para eventos TV)
 export const AddRecordingV2 = async (eventId) => {
-    console.log("oq temos no add", eventId)
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('addRecordingV2',
@@ -200,10 +177,6 @@ export const AddRecordingV2 = async (eventId) => {
 }
 //call para remover eventos gravados (opção disponivel apenas para eventos TV)
 export const RemoveRecording = async (eventId) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('removeRecording',
@@ -226,10 +199,6 @@ export const RemoveRecording = async (eventId) => {
 
 //call para lista de eventos salvos
 export const GetMyListFull = async () => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('getMyListFull',
@@ -249,11 +218,6 @@ export const GetMyListFull = async () => {
 }
 //call para adicionar eventos em uma lista de reprodução (TV E VOD)
 export const AddToMyList = async (eventId, type) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
-
     try {
         const response = await api.post('addToMyList',
             {
@@ -274,10 +238,6 @@ export const AddToMyList = async (eventId, type) => {
 }
 //call para remover eventos em uma lista de reprodução (TV E VOD)
 export const RemoveFromMyList = async (eventId, type) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
 
     try {
         const response = await api.post('removeFromMyList',
@@ -300,11 +260,6 @@ export const RemoveFromMyList = async (eventId, type) => {
 
 
 export const GetStreamChannelUrlV3 = async (channels_id, type, type_rep, eventTimestamp) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
-
     try {
         if (type_rep === "LIVE") {
 
@@ -331,13 +286,7 @@ export const GetStreamChannelUrlV3 = async (channels_id, type, type_rep, eventTi
     }
 }
 
-
 export const GetStreamVodUrlV3 = async (vods_id, type) => {
-    const auth = localStorage.getItem("authorization");
-    const profile = sessionStorage.getItem("profileid");
-    const language = await GetLanguage();
-    const devicesType = await GetDevicesType();
-
     try {
         const response = await api.post('getStreamVodUrlV3',
             {
@@ -356,6 +305,14 @@ export const GetStreamVodUrlV3 = async (vods_id, type) => {
         console.error('Failed to fetch data:', error);
         throw error;
     }
+}
+
+
+export const GetSubscribedAndLockedChannels = async () => {
+
+
+    return auth
+
 }
 
 
