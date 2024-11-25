@@ -21,7 +21,8 @@ function Player() {
   const { event } = useParams(); // Pega o ID da URL
   const { channel } = useParams(); // Pega o ID da URL
   const navigate = useNavigate();
-  const checkLive = window.location.pathname
+  const checkLive = window.location.pathname.includes("LIVE")
+  console.log("o location", window.location.pathname.includes("LIVE"))
 
   const [eventDetails, setEventDetails] = useState([])
   const [videoContent, setVideoContent] = useState([])
@@ -42,7 +43,8 @@ function Player() {
   useEffect(() => {
     const loadData = async () => {
       if (type === "TV") {
-        if (checkLive.includes("LIVE") === true) {
+        if (checkLive === true) {
+          console.log("sim")
           const res = await GetEventRequestTv(event)
           if (res) {
             if (res.status === 1) {

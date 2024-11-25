@@ -149,6 +149,12 @@ export const FormatChannelTitleLength = (title) => {
     return formatedDescription;
 }
 
+export const FormatChannelDescriptionLength = (title) => {
+    const formatedDescription = title.length <= 30 ? title : title.substring(0, 30) + "";
+
+    return formatedDescription;
+}
+
 export const FormatRating = (rating) => {
 
     switch(rating){
@@ -173,7 +179,6 @@ export const SaveEvent = (eventData, destination, origin) => {
 
 
 }
-
 
 export const Logout = (navigate) => {
 localStorage.clear();

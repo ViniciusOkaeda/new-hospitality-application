@@ -1,7 +1,7 @@
 .categoriesContainer {
     width: 1880px;
     height: 90px;
-    margin-top: 100px;
+    margin-top: 90px;
     overflow: hidden;
 }
 
@@ -11,6 +11,8 @@
     display: flex;
 overflow: auto;
 box-sizing: border-box;
+padding-top: 10px;
+
 }
 
 .channelsContent {
@@ -45,7 +47,7 @@ box-shadow: none;
     height: 890px;
     display: flex;
     flex-wrap: wrap;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 

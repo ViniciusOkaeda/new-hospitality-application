@@ -59,6 +59,7 @@ body::-webkit-scrollbar {
 .flexColumn {
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
 
 }
 
@@ -143,6 +144,7 @@ a {
 box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
   font-weight: bold;
   font-size: 1.1rem;
+  outline: none; /* Remover o outline padrão */
   transition-timing-function: ease-in;
 }
 
@@ -151,6 +153,7 @@ box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
 box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
   font-weight: bold;
   font-size: 1.1rem;
+  outline: none; /* Remover o outline padrão */
   transition-timing-function: ease-in;
 }
 
@@ -160,6 +163,7 @@ box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
   box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
   font-weight: bold;
   font-size: 1.1rem;
+  outline: none; /* Remover o outline padrão */
   transition-timing-function: ease-in;
 }
 
@@ -167,6 +171,21 @@ box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
   border: 5px solid rgb(255, 51, 51);
   box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
   font-weight: bold;
+  outline: none; /* Remover o outline padrão */
+  transition-timing-function: ease-in;
+}
+.categoriesButton:focus-within {
+  border: 5px solid rgb(255, 51, 51);
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
+  font-weight: bold;
+  outline: none; /* Remover o outline padrão */
+  transition-timing-function: ease-in;
+}
+.channelsButton:focus-within {
+  border: 5px solid rgb(255, 51, 51);
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 7px 29px 0px;
+  font-weight: bold;
+  outline: none; /* Remover o outline padrão */
   transition-timing-function: ease-in;
 }
 
