@@ -12,19 +12,21 @@ import Reload from "../../images/go-back-arrow.png";
 import Legend from "../../images/transcript.png";
 import Highquality from "../../images/high-quality.png"
 import { FormatDate, FormatDuration, FormatRating } from "../../utils/constants";
-import { GetStreamChannelUrlV3, GetStreamVodUrlV3, GetEventRequestTv, GetEventRequestVod } from "../../services/calls";
-import axios from "axios";
+import { GetStreamChannelUrlV3, GetStreamVodUrlV3, GetEventRequestTv, GetEventRequestVod, GetLiveChannelEvents } from "../../services/calls";
 import { useKeyNavigation } from "../../utils/newNavigation";
+import shaka from "shaka-player";
 
 function Player() {
   const { type } = useParams(); // Pega o ID da URL
   const { event } = useParams(); // Pega o ID da URL
   const { channel } = useParams(); // Pega o ID da URL
   const navigate = useNavigate();
+  
   const checkLive = window.location.pathname.includes("LIVE")
-  console.log("o location", window.location.pathname.includes("LIVE"))
+  //console.log("o location", window.location.pathname.includes("LIVE"))
 
   const [eventDetails, setEventDetails] = useState([])
+  const [channelsContent, setChannelsContent] = useState([])
   const [videoContent, setVideoContent] = useState([])
   const [enableArrows, setEnableArrows] = useState(false)
   const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
@@ -35,24 +37,27 @@ function Player() {
   // Estado para o tempo total e o tempo atual do vídeo
   const [currentTime, setCurrentTime] = useState(0); // Inicializa o currentTime com 410 segundos
   const [duration, setDuration] = useState(0); // Inicializa a duração
-//console.log("a duraçao", duration)
-//console.log("a currentTime", currentTime)
+  //console.log("a duraçao", duration)
+  //console.log("a currentTime", currentTime)
   const videoRef = useRef(null); // Referência para o elemento <video>
-
 
   useEffect(() => {
     const loadData = async () => {
       if (type === "TV") {
         if (checkLive === true) {
-          console.log("sim")
-          const res = await GetEventRequestTv(event)
+          //console.log("sim")
+          const res = await GetLiveChannelEvents()
           if (res) {
-            if (res.status === 1) {
-              setEventDetails(res.response[0])
-              const result = await GetStreamChannelUrlV3(channel, type, "LIVE", res.response[0].start);
+            //console.log("deu res", res.map(e => e.content).filter(item => item.channels_id === parseInt(channel))[0] )
+              setEventDetails(res.map(e => e.content).filter(item => item.channels_id === parseInt(channel))[0])
+
+              const result = await GetStreamChannelUrlV3(channel, type, "LIVE", parseInt(new Date().getTime() / 1000) );
               if (result) {
                 if (result.status === 1) {
+                  //console.log("meu result", result.response)
+                  console.log("meu responseawaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                   setVideoContent(result.response)
+    
                   var video = document.getElementById('video');
                   const videoManager = new VideoManager(result.response);
                   await init();
@@ -61,52 +66,48 @@ function Player() {
                   //await videoManager.load(TEST_VIDEO);
                   videoManager.play();
                   uiReady();
-                  setDuration(res.response[0].duration); // Definir a duração do vídeo
+                  setDuration(res.map(e => e.content).filter(item => item.channels_id === parseInt(channel))[0].duration); // Definir a duração do vídeo
                   video.addEventListener("timeupdate", () => {
                     setCurrentTime(video.currentTime);
                   });
 
+                  /*
+                  */
+
                 }
               }
             }
-          }
 
         } else {
           try {
             const res = await GetEventRequestTv(event)
             if (res) {
-              if (res.status === 1) {
-                setEventDetails(res.response[0])
-                const result = await GetStreamChannelUrlV3(channel, type, "NOT LIVE", res.response[0].start);
-                if (result) {
-                  if (result.status === 1) {
-                    setVideoContent(result.response)
-                    var video = document.getElementById('video');
-                    const videoManager = new VideoManager(result.response);
-                    await init();
-                    videoManager.init(video);
-                    /*
-                    
-                    */
-                    await videoManager.load(result.response.url).then(function () {
-                      /*
-                      
-                      video.currentTime = 410
-                      */
-                    })
-                    //await videoManager.load(TEST_VIDEO);
-                    videoManager.play();
-                    uiReady();
-                    setDuration(res.response[0].duration); // Definir a duração do vídeo
-                    video.addEventListener("timeupdate", () => {
-                      console.log("ta atualizando", video.currentTime)
-                      setCurrentTime(video.currentTime);
-                    });
-                  }
+              setEventDetails(res.response[0])
+              const result = await GetStreamChannelUrlV3(channel, type, "NOT LIVE", res.response[0].start);
+              if (result) {
+                if (result.status === 1) {
+                  setVideoContent(result.response)
+                  console.log("meu resultado", result.response)
+                  var video = document.getElementById('video');
+
+                  const videoManager = new VideoManager(result.response);
+                  await init();
+                  videoManager.init(video);
+                  /*
+                  
+                  */
+                  await videoManager.load(result.response.url)
+                  videoManager.play();
+                  uiReady();
+                  //await videoManager.load(TEST_VIDEO);
+                  setDuration(res.response[0].duration); // Definir a duração do vídeo
+                  video.addEventListener("timeupdate", () => {
+                    console.log("ta atualizando", video.currentTime)
+                    setCurrentTime(video.currentTime);
+                  });
                 }
               }
             }
-
           } catch (err) {
             setError(err.message || 'An error occurred');
           } finally {
@@ -194,7 +195,7 @@ function Player() {
     return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
   };
 
-  const TEST_VIDEO = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd";
+  //const TEST_VIDEO = "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears.mpd";
 
   const handleArrowDown = () => {
     console.log("Seta para baixo pressionada");
@@ -317,7 +318,7 @@ function Player() {
                 <p className="bottomButtonDivText displayNone">Canais</p>
               </div>
 
-                {/* REMOVER RESSE SE FOR VOD */}
+              {/* REMOVER RESSE SE FOR VOD */}
               <div className="bottomButtonDiv">
                 <button className="bottomOptionsButton bottomOptionsButtonAdditional">
                   <img className="bottomOptionsButtonImage" src={Checklist}></img>
@@ -336,7 +337,7 @@ function Player() {
             </div>
 
             <div className="bottomOptionsButtonContainer bottomMinWidth2">
-              
+
               {/* REMOVER RESSE SE FOR VOD */}
               <div className="bottomButtonDiv">
                 <button className="bottomOptionsButton bottomOptionsButtonAdditional">
@@ -356,7 +357,7 @@ function Player() {
                 <p className="bottomButtonDivText displayNone">Assistir desde o inicio</p>
               </div>
 
-{/* REMOVER RESSE SE FOR VOD */}
+              {/* REMOVER RESSE SE FOR VOD */}
               <div className="bottomButtonDivLive">
                 <button className="bottomOptionsButton bottomOptionsButtonWithText">
                   Ao vivo
@@ -369,7 +370,7 @@ function Player() {
 
               </div>
 
-{/* REMOVER RESSE SE FOR VOD */}
+              {/* REMOVER RESSE SE FOR VOD */}
               <div className="bottomButtonDiv">
                 <button className="bottomOptionsButton bottomOptionsButtonAdditional">
                   <img className="bottomOptionsButtonImage" src={Next}></img>

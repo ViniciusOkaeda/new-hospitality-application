@@ -10,6 +10,7 @@ import Guide from "../pages/guide/guide";
 import Vod from "../pages/vod/vod";
 import Search from "../pages/search/search";
 import Catchup from "../pages/catchup/catchup";
+import DetailCatchup from "../pages/catchup/detailCatchup";
 import Favorite from "../pages/favorite/favorite";
 
 function AllRoutes() {
@@ -28,6 +29,7 @@ function AllRoutes() {
                 <Route path="/vod" element={<Vod />} />
                 <Route path="/search" element={<Search />} />
                 <Route path="/catchup" element={<Catchup />} />
+                <Route path="/catchup/detail/:channel" element={<DetailCatchup />} />
                 <Route path="/favorite" element={<Favorite />} />
 
 

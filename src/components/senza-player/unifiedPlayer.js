@@ -513,4 +513,3 @@ async function getLicenseFromServer(drmServer, licenseRequest, drmRequestFilter,
 
   return { code, responseBody: response.data };
 }
-

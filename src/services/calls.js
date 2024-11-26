@@ -1,12 +1,13 @@
 import api from "./api"
 import { useNavigate, useParams } from "react-router-dom";
-import { GetDevicesType, GetLanguage, GetTodayDate } from "../utils/constants";
+import { GetDevicesType, GetLanguage, GetTodayDate, GetPastDate, GetDevicesIdentification, GetFingerPrint } from "../utils/constants";
 
 export const auth = await localStorage.getItem("authorization");
 export const profile = await sessionStorage.getItem("profileid");
 export const language = await GetLanguage();
 export const devicesType = await GetDevicesType();
 export const stringTodayDate = await GetTodayDate();
+export const stringPastDate = await GetPastDate();
 
 
 export const LoginMotv = async (navigate) => {
@@ -259,11 +260,28 @@ export const RemoveFromMyList = async (eventId, type) => {
     }
 }
 
-
+//call para pegar os dados de streaming de canais
 export const GetStreamChannelUrlV3 = async (channels_id, type, type_rep, eventTimestamp) => {
+    const deviceIdentification = await GetDevicesIdentification()
+    const deviceHash = await GetFingerPrint();
     try {
         if (type_rep === "LIVE") {
-
+            const response = await api.post('getStreamChannelUrlV3',
+                {
+                    authorization: 'Bearer ' + auth,
+                    channelsId: parseInt(channels_id),
+                    profileId: profile,
+                    devicesType: devicesType,
+                    devicesHash: deviceHash,
+                    devicesIdentification: deviceIdentification,
+                    includeData: true,
+                    language: language,
+                    live: true,
+                    timestamp: eventTimestamp,
+                    type: type
+                }
+            );
+            return response.data;
         } else {
             const response = await api.post('getStreamChannelUrlV3',
                 {
@@ -271,6 +289,8 @@ export const GetStreamChannelUrlV3 = async (channels_id, type, type_rep, eventTi
                     channelsId: parseInt(channels_id),
                     profileId: profile,
                     devicesType: devicesType,
+                    devicesHash: deviceHash,
+                    devicesIdentification: deviceIdentification,
                     includeData: true,
                     language: language,
                     live: false,
@@ -287,6 +307,7 @@ export const GetStreamChannelUrlV3 = async (channels_id, type, type_rep, eventTi
     }
 }
 
+//call para pegar os dados de streaming de vod
 export const GetStreamVodUrlV3 = async (vods_id, type) => {
     try {
         const response = await api.post('getStreamVodUrlV3',
@@ -308,7 +329,7 @@ export const GetStreamVodUrlV3 = async (vods_id, type) => {
     }
 }
 
-
+//call para pegar lista de todos os canais disponíveis em um usuario
 export const GetSubscribedAndLockedChannels = async () => {
     try {
         const response = await api.post('getSubscribedAndLockedChannels',
@@ -332,6 +353,7 @@ export const GetSubscribedAndLockedChannels = async () => {
 
 }
 
+//call para pegar todas as categorias de canais de um usuario
 export const GetChannelCategories = async () => {
     try {
         const response = await api.post('getChannelCategories',
@@ -352,6 +374,7 @@ export const GetChannelCategories = async () => {
     }
 }
 
+//call para pegar os canais favoritos de um usuario
 export const GetFavoriteChannels = async () => {
     try {
         const response = await api.post('getFavoriteChannels',
@@ -372,6 +395,7 @@ export const GetFavoriteChannels = async () => {
     }
 }
 
+//call para pegar a programação que está ao vivo em todos os canais
 export const GetLiveChannelEvents = async () => {
     try {
         const response = await api.post('getEpgUpdatedEventsV2',
@@ -385,6 +409,31 @@ export const GetLiveChannelEvents = async () => {
                 timestamp: 0,
                 from: stringTodayDate,
                 to: stringTodayDate
+            }
+        );
+        return response.data;
+
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+}
+
+//call para pegar a programação de vários dias de um único canal
+export const GetChannelEvents = async (channel) => {
+    try {
+        const response = await api.post('getChannelEvents',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType,
+                liveOnly: true,
+                timestamp: 0,
+                from: stringPastDate,
+                to: stringTodayDate,
+                channels: [parseInt(channel)]
             }
         );
         return response.data;

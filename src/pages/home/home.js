@@ -272,16 +272,19 @@ function Home() {
         if (menuFocused && activePage.length > 0) {
             if (activePage === "profile") {
                 sessionStorage.clear();
-                navigate('/' + activePage)
+                //navigate('/' + activePage)
+                window.location.href = `/${activePage}`;
             } else if (activePage === "logout") {
                 localStorage.clear()
                 sessionStorage.clear()
-                navigate('/' + activePage)
+                //navigate('/' + activePage)
+                window.location.href = `/${activePage}`;
             } else if (window.location.pathname === "/" + activePage) {
                 window.location.reload()
             } else {
                 console.log("to aqui", activePage)
-                navigate(`/${activePage}`)
+                window.location.href = `/${activePage}`;
+                //navigate(`/${activePage}`)
             }
         } else {
             if (focusedContent) {

@@ -1,0 +1,78 @@
+.categoriesContainer {
+    width: 1880px;
+    height: 70px;
+    margin-top: 90px;
+    overflow: hidden;
+}
+
+.categoriesContent {
+    width: 1920px;
+    height: 100%;
+    display: flex;
+overflow: auto;
+box-sizing: border-box;
+padding-top: 10px;
+
+}
+
+.channelsContent {
+    width: 100%;
+    height: 880px;
+}
+
+.categoriesContent::-webkit-scrollbar {
+    display: none;
+}
+
+
+.channelsContainer {
+    width: 1880px;
+    height: 890px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow: hidden;
+}
+
+
+.channelsButton {
+width: 420px;
+margin: 10px;
+border-radius: 5px;
+flex-shrink: 0;
+height: 100px;
+background-color: rgb(29, 29, 29);
+display: flex;
+flex-direction: column;
+}
+.channelDetails {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.channelDetailsLogo {
+width: 40%;
+height: 100%;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.channelDetailsLogoImg {
+height: 60%;
+}
+
+.channelDetailsText {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+
+.channelsTimeReproduced {
+    height: 3%;
+    width: 100%;
+    border-radius: 0 0 100px 100px;
+}

@@ -191,7 +191,7 @@ function Channel() {
     };
 
     const handleArrowLeft = () => {
-        if (containerCount === -1 || cardCount === -1 || horizontalChannelCount === -1) {
+        if (containerCount === -1 || horizontalChannelCount === -1) {
             // Se estamos no menu ou se o card não está focado (cardCount === -1)
             setMenuFocused(true); // Ativa o foco no menu
 
@@ -270,7 +270,7 @@ function Channel() {
 
                 //setHorizontalChannelCount(0)
                 // Se o cardCount estiver -1, significa que não havia foco no card, então foca no primeiro card
-                setCardCount(0); // Garantir que o foco vá para o primeiro card
+                //setCardCount(0); // Garantir que o foco vá para o primeiro card
             }
 
             // Foca no primeiro card
@@ -284,11 +284,13 @@ function Channel() {
                 if(cardCount > 3) {
                     if (divRef.current[containerCount] && divRef.current[containerCount][cardCount]) {
                         divRef.current[containerCount][cardCount].focus(); // Foca no primeiro card
+                        setHorizontalChannelCount(0);
                     }
                 } else {
                     if (divRef.current[containerCount] && divRef.current[containerCount][0]) {
                         divRef.current[containerCount][0].focus(); // Foca no primeiro card
                         setCardCount(0)
+                        setHorizontalChannelCount(0)
                     }
                 }
             }
@@ -321,16 +323,19 @@ function Channel() {
         if (menuFocused && activePage.length > 0) {
             if (activePage === "profile") {
                 sessionStorage.clear();
-                navigate('/' + activePage)
+                //navigate('/' + activePage)
+                window.location.href = `/${activePage}`;
             } else if (activePage === "logout") {
                 localStorage.clear()
                 sessionStorage.clear()
-                navigate('/' + activePage)
+                //navigate('/' + activePage)
+                window.location.href = `/${activePage}`;
             } else if (window.location.pathname === "/" + activePage) {
                 window.location.reload()
             } else {
                 console.log("to aqui", activePage)
-                navigate(`/${activePage}`)
+                window.location.href = `/${activePage}`;
+                //navigate(`/${activePage}`)
             }
         } else {
             if(containerCount === 0) {

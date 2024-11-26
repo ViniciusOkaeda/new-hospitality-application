@@ -1,7 +1,29 @@
+import React, {useEffect} from 'react';
+import platform from 'platform';
+import FingerprintJS from '@fingerprintjs/fingerprintjs';
+
+
 export const GetDevicesType = () => {
     const devices = btoa("web player")
 
     return devices;
+}
+export const GetDevicesIdentification = async () => {
+    const os = platform.os.family;
+    const browser = platform.name;
+    const version = platform.version;
+
+    const identification = `${os} ${browser} ${version}`
+
+    return identification
+}
+
+export const GetFingerPrint = async () => {
+const fp = await FingerprintJS.load();
+
+const result = await fp.get();
+
+return result.visitorId
 }
 
 export const GetLanguage = () => {
@@ -30,6 +52,37 @@ const options = {
   const isoDateTime = formattedDate.replace(',', '').replace(/\//g, '-').replace(' ', 'T');
   
     return isoDateTime
+}
+
+export const GetPastDate = () => {
+    // Obtém a data atual
+  const currentDateTime = new Date();
+
+  // Subtrai 7 dias da data atual
+  currentDateTime.setDate(currentDateTime.getDate() - 7);
+
+  // Configurações para fuso horário de São Paulo
+  const options = {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  };
+
+  // Formata a data com base nas opções
+  const dateFormatter = new Intl.DateTimeFormat('en-GB', options);
+  const formattedDate = dateFormatter.format(currentDateTime);
+
+  // Converte para o formato ISO 8601 (YYYY-MM-DDTHH:mm:ss)
+  const isoDateTime = formattedDate
+    .replace(',', '')
+    .replace(/\//g, '-')
+    .replace(' ', 'T');
+
+  return isoDateTime;
 }
 
 export const GetProgressPercentage = (start, end) => {
@@ -150,7 +203,7 @@ export const FormatChannelTitleLength = (title) => {
 }
 
 export const FormatChannelDescriptionLength = (title) => {
-    const formatedDescription = title.length <= 30 ? title : title.substring(0, 30) + "";
+    const formatedDescription = title.length <= 26 ? title : title.substring(0, 25) + "";
 
     return formatedDescription;
 }

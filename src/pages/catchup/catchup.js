@@ -3,8 +3,8 @@ import './catchup.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
-import { GetHomepageV2 } from "../../services/calls";
-import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
+import { GetTodayDate, FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages, GetProgressPercentage, FormatChannelTitleLength, FormatChannelDescriptionLength } from "../../utils/constants";
+import { GetChannelCategories, GetSubscribedAndLockedChannels, GetFavoriteChannels, GetLiveChannelEvents } from "../../services/calls";
 import { Menu } from "../../components/menu/menu";
 import { useKeyNavigation } from "../../utils/newNavigation";
 import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest } from "../../components/cards/cards";
@@ -13,33 +13,45 @@ import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest
 function Catchup() {
     const [enableArrows, setEnableArrows] = useState(false)
 
-    console.log("o window", window.location)
     const [isLoaded, setIsLoaded] = useState(false); // Estado para controlar o carregamento
 
 
 
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
-    const [homepageContent, setHomepageContent] = useState([]);
-    console.log("minha home", homepageContent)
     const [activePage, setActivePage] = useState('');
 
     const navigate = useNavigate()
 
+    const [categoryFocused, setCategoryFocused] = useState(null)
+    const [categoryFilteredOnKeyPress, setCategoryFilteredOnKeyPress] = useState(null)
+    const [channelFocused, setChannelFocused] = useState([])
+
+    const [enableCountChannels, setEnableCountChannels] = useState(false)
+    const [horizontalChannelCount, setHorizontalChannelCount] = useState(0)
     const [haveFocusedEvent, setHaveFocusedEvent] = useState(false);
-    const [focusedContent, setFocusedContent] = useState([])
+    const [subcribedChannels, setSubscribedChannels] = useState([])
+    const [channelCategories, setChannelCategories] = useState([])
+    const [favoriteChannels, setFavoriteChannels] = useState([])
+    const [liveEventChannels, setLiveEventChannels] = useState([])
 
-    const model = 1 //auxiliar para nao precisar focar e exibir cards
+    const divRef = useRef([]); // Ref para a div que você deseja medir
+    const handleButtonRef = (index, index2, el) => {
+        // Garantir que o array esteja inicializado
+        if (!divRef.current[index]) {
+            divRef.current[index] = [];
+        }
+        divRef.current[index][index2] = el;
+    };
 
-
-    const [divDimensions, setDivDimensions] = useState({
-        visibleWidth: 0,
-        visibleHeight: 0,
-        totalWidth: 0,
-        totalHeight: 0,
-    });
-    const divRef = useRef(null); // Ref para a div que você deseja medir
-
+    useEffect(() => {
+        if (!divRef.current[0]) {
+            divRef.current[0] = [];
+        }
+        if (!divRef.current[1]) {
+            divRef.current[1] = [];
+        }
+    }, []);
 
 
     // Função para atualizar as dimensões da div
@@ -48,10 +60,10 @@ function Catchup() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const result = await GetHomepageV2();
+                const result = await GetSubscribedAndLockedChannels();
                 if (result) {
                     if (result.status === 1) {
-                        setHomepageContent(result.response)
+                        setSubscribedChannels(result.response)
                     }
                 }
             } catch (err) {
@@ -72,10 +84,6 @@ function Catchup() {
     const [selectableMenus, setSelectableMenu] = useState([])
     const menuRef = useRef(null)
 
-    const categoryRefs = useRef(homepageContent.map(() => React.createRef())); // Refs para categorias
-    const itemRefs = useRef([]); // Refs para os itens dentro de cada categoria
-    const buttonRefs = useRef([]);  // Vai armazenar as referências dos botões
-
     // Funções de navegação
     const handleArrowDown = () => {
         console.log("Seta para baixo pressionada");
@@ -88,6 +96,38 @@ function Catchup() {
                 menuRef.current.focusButton(nextCount); // Foca o próximo item
             }
         } else {
+            if (containerCount < 0) {
+                let nextItemIndex = containerCount + 1
+                setContainerCount(nextItemIndex)
+                setTimeout(() => {
+                    if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
+                        //console.log("o next", nextItemIndex)
+                        //console.log("meu ref", divRef.current[nextItemIndex])
+                        //window.scrollTo(0, 0)
+                        divRef.current[nextItemIndex][cardCount].focus();
+                        setEnableCountChannels(true)
+                    }
+
+                }, 10);
+            }
+            if (enableCountChannels === true) {
+                console.log("virou true")
+                var checkCount = cardCount + 3
+                if(checkCount < divRef.current[containerCount].length - 1) {
+                    if (cardCount < divRef.current[containerCount].length - 1) {
+                        let nextChannelIndex = cardCount + 4
+                        setCardCount(nextChannelIndex)
+                        console.log("o cardCount", cardCount)
+                        if (divRef.current[containerCount][nextChannelIndex]) {
+                            divRef.current[containerCount][nextChannelIndex].focus()
+                        }
+                    }
+
+                }
+
+            }
+            //console.log("meu buttonref el0", divRef.current[0])
+            //console.log("meu buttonref el1", divRef.current[1])
             //logica da pagina em si
 
         }
@@ -104,12 +144,21 @@ function Catchup() {
                 menuRef.current.focusButton(prevCount); // Foca o item anterior
             }
         } else {
+            if (enableCountChannels === true) {
+                if (cardCount > 3) {
+                    let nextChannelIndex = cardCount - 4
+                    setCardCount(nextChannelIndex)
+                    if (divRef.current[containerCount][nextChannelIndex]) {
+                        divRef.current[containerCount][nextChannelIndex].focus()
+                    }
+                }
+            }
             //logica da pagina
         }
     };
 
     const handleArrowLeft = () => {
-        if (containerCount === -1 || cardCount === -1) {
+        if (containerCount === -1 || horizontalChannelCount === -1) {
             // Se estamos no menu ou se o card não está focado (cardCount === -1)
             setMenuFocused(true); // Ativa o foco no menu
 
@@ -118,24 +167,45 @@ function Catchup() {
                 menuRef.current.focusButton(menuCount);
             }
         } else {
-            // Se estamos em um card, decrementamos o cardCount para focar no card anterior
-            let previousCardIndex = cardCount - 1;
+            if (containerCount === 0) {
+                if (horizontalChannelCount > -1) {
+                    setHorizontalChannelCount(horizontalChannelCount - 1)
+                    if (horizontalChannelCount > 0) {
+                        let previousCardIndex = cardCount - 1;
+                        setCardCount(previousCardIndex);
+                        if (divRef.current[containerCount] && divRef.current[containerCount][previousCardIndex]) {
+                            divRef.current[containerCount][previousCardIndex].focus();
+                            //divRef.current[containerCount][previousCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
+                        }
+                    }
+                }
+                if (horizontalChannelCount === -1) {
+                    console.log("cheguei aqui")
+                }
 
-            if (previousCardIndex >= 0) {
-                // Se houver um card anterior, atualizamos o cardCount e focamos no card
-                setCardCount(previousCardIndex);
-                if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][previousCardIndex]) {
-                    buttonRefs.current[containerCount][previousCardIndex].focus();
-                    buttonRefs.current[containerCount][previousCardIndex].scrollIntoView({behavior: "auto", block: "nearest", inline: "center" })
-                }
             } else {
-                // Se previousCardIndex for -1, desfocamos o card e focamos no menu
-                setCardCount(-1); // Atualiza o estado de cardCount para -1
-                setMenuFocused(true); // Desfoca o menu
-                if (menuRef.current) {
-                    menuRef.current.focusButton(menuCount); // Foca o item do menu
-                }
+
+
+                /*
+                if (previousCardIndex >= 0) {
+                    // Se houver um card anterior, atualizamos o cardCount e focamos no card
+ 
+                } else {
+                    // Se previousCardIndex for -1, desfocamos o card e focamos no menu
+                    setCardCount(-1); // Atualiza o estado de cardCount para -1
+                    setMenuFocused(true); // Desfoca o menu
+                    if (menuRef.current) {
+                        menuRef.current.focusButton(menuCount); // Foca o item do menu
+                    }
             }
+                
+                
+                */
+
+            }
+            // Se estamos em um card, decrementamos o cardCount para focar no card anterior
+
+
         }
     };
 
@@ -151,22 +221,43 @@ function Catchup() {
 
             // Agora, garantimos que o cardCount seja 0
             if (containerCount !== -1) {
+                setButtonCount(0)
+
+                //setHorizontalChannelCount(0)
                 // Se o cardCount estiver -1, significa que não havia foco no card, então foca no primeiro card
-                setCardCount(0); // Garantir que o foco vá para o primeiro card
+                //setCardCount(0); // Garantir que o foco vá para o primeiro card
             }
 
             // Foca no primeiro card
-            if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][0]) {
-                buttonRefs.current[containerCount][0].focus(); // Foca no primeiro card
+            if (containerCount === 0) {
+                if (cardCount > 3) {
+                    if (divRef.current[containerCount] && divRef.current[containerCount][cardCount]) {
+                        divRef.current[containerCount][cardCount].focus(); // Foca no primeiro card
+                        setHorizontalChannelCount(0);
+                    }
+                } else {
+                    if (divRef.current[containerCount] && divRef.current[containerCount][0]) {
+                        divRef.current[containerCount][0].focus(); // Foca no primeiro card
+                        setCardCount(0)
+                        setHorizontalChannelCount(0)
+                    }
+                }
+
             }
         } else {
-            // Caso contrário, vamos para o próximo card dentro do mesmo array
-            let nextCardIndex = cardCount + 1;
-            if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][nextCardIndex]) {
-                setCardCount(nextCardIndex);
-                buttonRefs.current[containerCount][nextCardIndex].focus();
-                buttonRefs.current[containerCount][nextCardIndex].scrollIntoView({behavior: "auto", block: "nearest", inline: "center" })
+
+            if (containerCount === 0) {
+                if (horizontalChannelCount < 3) {
+                    setHorizontalChannelCount(horizontalChannelCount + 1)
+                    let nextCardIndex = cardCount + 1;
+                    if (divRef.current[containerCount] && divRef.current[containerCount][nextCardIndex]) {
+                        setCardCount(nextCardIndex);
+                        divRef.current[containerCount][nextCardIndex].focus();
+                        //divRef.current[containerCount][nextCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
+                    }
+                }
             }
+            // Caso contrário, vamos para o próximo card dentro do mesmo array
         }
     };
 
@@ -174,19 +265,24 @@ function Catchup() {
         if (menuFocused && activePage.length > 0) {
             if (activePage === "profile") {
                 sessionStorage.clear();
-                navigate('/' + activePage)
+                //navigate('/' + activePage)
+                window.location.href = `/${activePage}`;
             } else if (activePage === "logout") {
                 localStorage.clear()
                 sessionStorage.clear()
-                navigate('/' + activePage)
+                //navigate('/' + activePage)
+                window.location.href = `/${activePage}`;
             } else if (window.location.pathname === "/" + activePage) {
                 window.location.reload()
             } else {
                 console.log("to aqui", activePage)
-                navigate(`/${activePage}`)
+                window.location.href = `/${activePage}`;
+                //navigate(`/${activePage}`)
             }
         } else {
-
+            if (containerCount === 0) {
+                window.location.href = `/catchup/detail/${channelFocused.channels_id}`;
+            }
         }
     };
 
@@ -199,17 +295,16 @@ function Catchup() {
     const {
         containerCount,
         cardCount,
+        buttonCount,
         menuCount,
         setContainerCount,
         setCardCount,
+        setButtonCount,
         setMenuCount,
     } = useKeyNavigation({
         menuFocused,
-        selectableContainers,
-        selectableMenus,
         loading,
         enableArrows,
-        divRef,
         onArrowUp: () => handleArrowUp(),
         onArrowDown: () => handleArrowDown(),
         onArrowLeft: () => handleArrowLeft(),
@@ -228,7 +323,7 @@ function Catchup() {
 
             ) : (
 
-                <div className="flex container flexColumn declaredOverflow"
+                <div className="flex container flexColumn declaredOverflow" ref={divRef}
                 >
                     <Menu
                         status={menuFocused}
@@ -237,15 +332,40 @@ function Catchup() {
                     />
 
 
-                    <div
-                        className="cardRows"
-                        ref={divRef}
+                    <div className="categoriesContainer paddingLeftDefault">
+                        <div className="categoriesContent">
 
-                        style={{
-                            maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
-                        }}
-                    >
+                            <h3>Arquivo de TV</h3>
 
+                        </div>
+                    </div>
+
+                    <div className="channelsContainer paddingLeftDefault">
+                        {subcribedChannels.map((channel, idx) => {
+
+
+                            return (
+                                <button
+                                    key={idx}
+                                    ref={(el) => handleButtonRef(0, idx, el)}
+                                    className="channelsButton"
+                                    onFocus={(() => {
+                                        setChannelFocused(channel)
+                                    })}
+                                >
+                                    <div className="channelDetails">
+                                        <div className="channelDetailsLogo">
+                                            <img src={channel.channels_logo} className="channelDetailsLogoImg"></img>
+                                        </div>
+                                        <div className="channelDetailsText">
+                                            <h5>{FormatChannelTitleLength(channel.channels_name)}</h5>
+                                        </div>
+                                    </div>
+
+                                </button>
+                            )
+                        })
+                        }
                     </div>
 
 
