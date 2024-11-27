@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import './profile.css';
 import { handleKeyDown } from "../../utils/navigation";
+import { useKeyNavigation } from "../../utils/newNavigation";
 import { Loader } from "../../components/loader/loader";
 import { LoginMotvWithToken } from "../../services/calls";
 import { Logout } from "../../utils/constants";
@@ -9,14 +10,28 @@ import { useNavigate } from "react-router-dom";
 function Profile() {
     const [enableArrows, setEnableArrows] = useState(false)
 
-    const [containerCount, setContainerCount] = useState(-1); // Começa em 0 para o primeiro elemento
-    const [cardCount, setCardCount] = useState(0); // Começa em 0 para o primeiro elemento
-    const [selectableContainers, setSelectableContainers] = useState([]);
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const [profiles, setProfiles] = useState([]);
     const navigate = useNavigate()
+    const [saveProfileData, setSaveProfileData] = useState([])
+    const divRef = useRef([])
+    const handleButtonRef = (index, index2, el) => {
+        // Garantir que o array esteja inicializado
+        if (!divRef.current[index]) {
+            divRef.current[index] = [];
+        }
+        divRef.current[index][index2] = el;
+    };
 
+    useEffect(() => {
+        if (!divRef.current[0]) {
+            divRef.current[0] = [];
+        }
+        if (!divRef.current[1]) {
+            divRef.current[1] = [];
+        }
+    }, []);
 
     const SaveProfileData = (profiles_name, token, profiles_id, profile_image) => {
         sessionStorage.setItem("profileid", btoa(profiles_id));
@@ -47,107 +62,97 @@ function Profile() {
 
     }, []); // Dependência vazia para garantir que loadData só seja chamado uma vez
 
-    useEffect(() => {
-        const selectableContainer = document.querySelectorAll('.selectedContainer');
-        setSelectableContainers(selectableContainer);
-        // Configuração do keyDownHandler
-        const keyDownHandler = (event) => {
-            if (!loading) { // Apenas permite navegação se não estiver carregando
-                handleKeyDown(event, {
-                    enter: () => {
+    const handleArrowDown = () => {
+            if(containerCount < 1) {
+                let nextItemIndex = containerCount + 1
+                setContainerCount(nextItemIndex)
+                if(nextItemIndex === 0){
+                    setTimeout(() => {
+                        if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                            console.log("Focando o primeiro item de divRef.current[0][0]");
+                            window.scrollTo(0, 0)
+                            divRef.current[nextItemIndex][buttonCount].focus();
+                                            }
+                    }, 10);
+                }else if(nextItemIndex === 1) {
+                    if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
 
-                        const focusedElement = document.activeElement;
-                        if (focusedElement.classList.contains('profileButton')) {
-                            const index = Array.from(document.querySelectorAll('.profileButton')).indexOf(focusedElement);
-                            SaveProfileData(
-                                profiles.profiles[index]?.profiles_name,
-                                profiles.profiles[index]?.token,
-                                profiles.profiles[index]?.profiles_id,
-                                profiles.profiles[index]?.image
-                            )
-                            console.log("Dados do perfil:", profiles.profiles[index]);
-                        } else if (focusedElement.id === "logoutButton") {
-                            Logout(navigate)
-                        }
-                    },
-                    escape: () => {
-                        console.log("Escape key pressed on Page 1");
-                    },
-                    up: () => {
-
-                        if (containerCount > 0) {
-                            setContainerCount(prev => {
-                                const newCount = prev - 1;
-                                setCardCount(0)
-                                // Focar no card anterior
-                                selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
-                                return newCount;
-                            });
-                        }
-                    },
-                    down: () => {
-                        console.log("opa")
-                        console.log("o containercount", containerCount)
-                        console.log("o selectableContainers", selectableContainers.length - 1)
-                        if (containerCount < selectableContainers.length) {
-                            console.log("opa 2")
-                            setContainerCount(prev => {
-                                const newCount = prev + 1;
-                                // Focar no próximo card (resetando cardCount se necessário)
-                                setTimeout(() => {
-                                    selectableContainers[newCount]?.getElementsByClassName('selectedCard')[0]?.focus();
-
-                                }, 10);
-                                return newCount;
-
-                            });
-                        }
-                    },
-                    left: () => {
-
-                        if(containerCount === 0 ) {
-                            if(cardCount > 0) {
-                                setCardCount(prev => {
-                                    const newCardCount = prev - 1;
-                                    selectableContainer[0]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
-                                    return newCardCount;
-                                })
-                            }
-                        }
-                    },
-                    right: () => {
-                        
-                        if(containerCount === 0 ) {
-                            if(cardCount < selectableContainers[0]?.getElementsByClassName('selectedCard').length -1) {
-                                setCardCount(prev => {
-                                    const newCardCount = prev + 1;
-                                    selectableContainer[0]?.getElementsByClassName('selectedCard')[newCardCount]?.focus()
-                                    return newCardCount;
-                                })
-                                //terminar aqui
-                            }
-                            //console.log("VEJAMOS", )
-                        }
-                        //console.log("Right key pressed on Page 1", selectableContainers[0]?.getElementsByClassName('selectedCard'));
-                    },
-                    home: () => {
-                        console.log("Home key pressed on Page 1");
-                    },
-                    squares: () => {
-                        console.log("Squares key pressed on Page 1");
-                    },
-                    // Outras teclas...
-                });
+                        divRef.current[nextItemIndex][cardCount].focus();
+                    }
+                    
+                }
             }
-        };
 
-        document.addEventListener("keydown", keyDownHandler);
-        return () => {
-            document.removeEventListener("keydown", keyDownHandler);
-        };
 
-    }, [containerCount, cardCount, profiles]); // Dependência vazia para garantir que loadData só seja chamado uma vez
+    };
 
+    const handleArrowUp = () => {
+        if(containerCount > 0) {
+            let previousItemIndex = containerCount - 1
+            setContainerCount(previousItemIndex)
+            if(divRef.current[previousItemIndex] && divRef.current[previousItemIndex][buttonCount]) {
+                divRef.current[previousItemIndex][buttonCount].focus();
+            }
+        }
+    };
+
+    const handleArrowLeft = () => {
+        if(containerCount === 0) {
+            let previousItemIndex = buttonCount - 1;
+            if (divRef.current[containerCount] && divRef.current[containerCount][previousItemIndex]) {
+                setButtonCount(previousItemIndex);
+                divRef.current[containerCount][previousItemIndex].focus();
+                //divRef.current[containerCount][nextCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
+            }
+        }
+    };
+
+    const handleArrowRight = () => {
+        if(containerCount === 0) {
+            let nextItemIndex = buttonCount + 1;
+            if (divRef.current[containerCount] && divRef.current[containerCount][nextItemIndex]) {
+                setButtonCount(nextItemIndex);
+                divRef.current[containerCount][nextItemIndex].focus();
+                //divRef.current[containerCount][nextCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
+            }
+        }
+    }; 
+
+    const handleEnter = () => {
+            if(containerCount === 0) {
+                console.log("save", saveProfileData)
+                sessionStorage.setItem("profileid", btoa(saveProfileData.profiles_id));
+                localStorage.setItem("profileimage", saveProfileData.image);
+                localStorage.setItem("profilename", saveProfileData.profiles_name);
+                window.location.href = `/home`;
+            } else {
+                Logout(navigate);
+            }
+    };
+
+    const handleEscape = () => {
+        console.log("Escape pressionado");
+
+        // Implemente a lógica para quando o usuário pressionar Escape (ex: sair do foco)
+    };
+
+    const {
+        containerCount,
+        cardCount,
+        buttonCount,
+        setContainerCount,
+        setCardCount,
+        setButtonCount,
+    } = useKeyNavigation({
+        loading,
+        enableArrows,
+        onArrowUp: () => handleArrowUp(),
+        onArrowDown: () => handleArrowDown(),
+        onArrowLeft: () => handleArrowLeft(),
+        onArrowRight: () => handleArrowRight(),
+        onEnter: () => handleEnter(),
+        onEscape: () => handleEscape(),
+    });
     return (
         <>
         {loading ? (
@@ -169,7 +174,15 @@ function Profile() {
                         return(
 
                     <div key={idx} className="profileContent">
-                        <button className="profileButton selectedCard">
+                        <button
+                        ref={(el) => handleButtonRef(0, idx, el)}
+
+                        onFocus={(() => {
+                            setSaveProfileData(item)
+                        })} 
+                        className="profileButton selectedCard"
+                        
+                        >
                             <img src={item.image}></img>
                         </button>
 
@@ -184,7 +197,11 @@ function Profile() {
                 </div>
 
                 <div className="footerContainer selectedContainer">
-                    <button id="logoutButton" className="footerButton selectedCard">Sair</button>
+                    <button 
+                    id="logoutButton" 
+                    className="footerButton selectedCard"
+                    ref={(el) => handleButtonRef(1, 0, el)}
+                    >Sair</button>
                 </div>
             </div>
         )

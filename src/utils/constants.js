@@ -191,9 +191,12 @@ export const FormatDuration = (duration) => {
 }
 
 export const FormatDescriptionLength = (description) => {
-    const formatedDescription = description.length <= 175 ? description : description.substring(0, 175) + "...";
+    if(description) {
+        const formatedDescription = description.length <= 175 ? description : description.substring(0, 175) + "...";
+    
+        return formatedDescription;
 
-    return formatedDescription;
+    }
 }
 
 export const FormatChannelTitleLength = (title) => {

@@ -332,15 +332,15 @@ function Catchup() {
                     />
 
 
-                    <div className="categoriesContainer paddingLeftDefault">
-                        <div className="categoriesContent">
+                    <div className="categoriesContainerCatchup paddingLeftDefault">
+                        <div className="categoriesContentCatchup">
 
                             <h3>Arquivo de TV</h3>
 
                         </div>
                     </div>
 
-                    <div className="channelsContainer paddingLeftDefault">
+                    <div className="channelsContainerCatchup paddingLeftDefault">
                         {subcribedChannels.map((channel, idx) => {
 
 
@@ -348,16 +348,16 @@ function Catchup() {
                                 <button
                                     key={idx}
                                     ref={(el) => handleButtonRef(0, idx, el)}
-                                    className="channelsButton"
+                                    className="channelsButtonCatchup channelsButtonColor"
                                     onFocus={(() => {
                                         setChannelFocused(channel)
                                     })}
                                 >
-                                    <div className="channelDetails">
-                                        <div className="channelDetailsLogo">
-                                            <img src={channel.channels_logo} className="channelDetailsLogoImg"></img>
+                                    <div className="channelDetailsCatchup">
+                                        <div className="channelDetailsLogoCatchup">
+                                            <img src={channel.channels_logo} className="channelDetailsLogoImgCatchup"></img>
                                         </div>
-                                        <div className="channelDetailsText">
+                                        <div className="channelDetailsTextCatchup">
                                             <h5>{FormatChannelTitleLength(channel.channels_name)}</h5>
                                         </div>
                                     </div>

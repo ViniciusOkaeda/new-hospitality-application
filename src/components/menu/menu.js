@@ -21,6 +21,7 @@ export const Menu = forwardRef(({ status, activePage }, ref) => {
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const navigate = useNavigate()
+    console.log("meu window", window.location.pathname)
 
     const buttonsRef = useRef([]); // Armazenando as refs dos botões, como um array.
     useImperativeHandle(ref, () => ({
@@ -43,6 +44,7 @@ export const Menu = forwardRef(({ status, activePage }, ref) => {
                 const result = await LoginMotvWithToken();
                 if (result) {
                     if (result.status === 1) {
+                        console.log("meu result", result)
                         setProfile(result.response.profiles[0])
                     }
                 }
@@ -59,7 +61,7 @@ export const Menu = forwardRef(({ status, activePage }, ref) => {
     //console.log("o status é ", status.status)
 
     const buttonData = [
-        { icon: profile.image, alt: profile.profiles_name, ref: "profile" },
+        { icon: localStorage.getItem('profileimage'), alt: localStorage.getItem('profilename'), ref: "profile" },
         { icon: SearchIcon, alt: "Pesquisar", ref: "search" },
         { icon: HomeIcon, alt: "Inicio", ref: "home" },
         { icon: ChannelIcon, alt: "Canais", ref: "channel" },
@@ -87,6 +89,9 @@ export const Menu = forwardRef(({ status, activePage }, ref) => {
                     {buttonData.map((button, index) => (
                         <button
                             key={index}
+                            style={{
+                                backgroundColor: `${window.location.pathname === `/${button.ref}` ? "rgb(150, 150, 150)" : "rgba(0, 0, 0, 0)"}`
+                            }}
                             onFocus={(() => {
                                 activePage(button.ref)
                             })}
@@ -118,7 +123,7 @@ export const Menu = forwardRef(({ status, activePage }, ref) => {
                 <div className="menuRightContainer">
                     <div className="menuIconTexts">
                         <div className="menuProfileText">
-                            <h4>{profile.profiles_name}</h4>
+                            <h4>{localStorage.getItem('profilename')}</h4>
                             <h6>Trocar Perfil</h6>
                         </div>
 
