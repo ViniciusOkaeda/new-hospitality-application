@@ -3,25 +3,26 @@ import './favorite.css';
 import { handleKeyDown } from "../../utils/navigation";
 import { Loader } from "../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
-import { GetHomepageV2 } from "../../services/calls";
+import { GetHomepageV2, GetRecordingsByProfileV2, GetMyListFull } from "../../services/calls";
 import { FormatDate, FormatDescriptionLength, FormatDuration, FormatRating, NavigateToPages } from "../../utils/constants";
 import { Menu } from "../../components/menu/menu";
 import { useKeyNavigation } from "../../utils/newNavigation";
-import { RenderCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest } from "../../components/cards/cards";
+import { RenderCards, RenderRecordingCards, RenderMyListCards, RenderCardsWithBackground, RenderChannelsCards, RenderTest } from "../../components/cards/cards";
 
 
 function Favorite() {
     const [enableArrows, setEnableArrows] = useState(false)
 
-    console.log("o window", window.location)
     const [isLoaded, setIsLoaded] = useState(false); // Estado para controlar o carregamento
 
 
 
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
-    const [homepageContent, setHomepageContent] = useState([]);
-    console.log("minha home", homepageContent)
+    const [recordingContent, setRecordingContent] = useState([])
+    const [myListContent, setMyListContent] = useState([])
+    const [userData, setUserData] = useState([])
+    console.log("meu user é ", userData)
     const [activePage, setActivePage] = useState('');
 
     const navigate = useNavigate()
@@ -32,7 +33,7 @@ function Favorite() {
     const model = 1 //auxiliar para nao precisar focar e exibir cards
 
 
-    const divRef = useRef(null); // Ref para a div que você deseja medir
+    const divRef = useRef([])
 
 
 
@@ -42,10 +43,18 @@ function Favorite() {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const result = await GetHomepageV2();
+                const result = await GetRecordingsByProfileV2();
                 if (result) {
                     if (result.status === 1) {
-                        setHomepageContent(result.response)
+                        setRecordingContent(result.response)
+
+                        const resultMyList = await GetMyListFull();
+                        if (resultMyList) {
+                            if (resultMyList.status === 1) {
+                                setMyListContent(resultMyList.response)
+
+                            }
+                        }
                     }
                 }
             } catch (err) {
@@ -66,8 +75,7 @@ function Favorite() {
     const [selectableMenus, setSelectableMenu] = useState([])
     const menuRef = useRef(null)
 
-    const categoryRefs = useRef(homepageContent.map(() => React.createRef())); // Refs para categorias
-    const itemRefs = useRef([]); // Refs para os itens dentro de cada categoria
+
     const buttonRefs = useRef([]);  // Vai armazenar as referências dos botões
 
     // Funções de navegação
@@ -83,6 +91,26 @@ function Favorite() {
             }
         } else {
             //logica da pagina em si
+            console.log("o divref", divRef.current[0])
+            console.log("o divref", divRef.current[1])
+            if(containerCount < 1) {
+                let nextItemIndex = containerCount + 1;
+                setContainerCount(nextItemIndex);
+                if (nextItemIndex === 0) {
+                    setTimeout(() => {
+                        // Certifique-se de que divRef.current[0][0] existe e focá-lo
+                        if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                            divRef.current[nextItemIndex][buttonCount].focus();
+                                            }
+                    }, 10);
+                } else if (nextItemIndex === 1) {
+
+                    if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][cardCount]) {
+                        divRef.current[nextItemIndex][cardCount].focus();
+                    }
+                }
+            }
+
 
         }
     };
@@ -98,8 +126,15 @@ function Favorite() {
                 menuRef.current.focusButton(prevCount); // Foca o item anterior
             }
         } else {
-            //logica da pagina
-        }
+            if (containerCount > 0) {
+                let nextItemIndex = containerCount - 1;
+                setContainerCount(nextItemIndex);
+                if (nextItemIndex === 0) {
+                    if (divRef.current[nextItemIndex] && divRef.current[nextItemIndex][buttonCount]) {
+                        divRef.current[nextItemIndex][buttonCount].focus();
+                    }
+                }
+            }        }
     };
 
     const handleArrowLeft = () => {
@@ -118,9 +153,9 @@ function Favorite() {
             if (previousCardIndex >= 0) {
                 // Se houver um card anterior, atualizamos o cardCount e focamos no card
                 setCardCount(previousCardIndex);
-                if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][previousCardIndex]) {
-                    buttonRefs.current[containerCount][previousCardIndex].focus();
-                    buttonRefs.current[containerCount][previousCardIndex].scrollIntoView({behavior: "auto", block: "nearest", inline: "center" })
+                if (divRef.current[containerCount] && divRef.current[containerCount][previousCardIndex]) {
+                    divRef.current[containerCount][previousCardIndex].focus();
+                    divRef.current[containerCount][previousCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
                 }
             } else {
                 // Se previousCardIndex for -1, desfocamos o card e focamos no menu
@@ -150,16 +185,16 @@ function Favorite() {
             }
 
             // Foca no primeiro card
-            if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][0]) {
-                buttonRefs.current[containerCount][0].focus(); // Foca no primeiro card
+            if (divRef.current[containerCount] && divRef.current[containerCount][0]) {
+                divRef.current[containerCount][0].focus(); // Foca no primeiro card
             }
         } else {
             // Caso contrário, vamos para o próximo card dentro do mesmo array
             let nextCardIndex = cardCount + 1;
-            if (buttonRefs.current[containerCount] && buttonRefs.current[containerCount][nextCardIndex]) {
+            if (divRef.current[containerCount] && divRef.current[containerCount][nextCardIndex]) {
                 setCardCount(nextCardIndex);
-                buttonRefs.current[containerCount][nextCardIndex].focus();
-                buttonRefs.current[containerCount][nextCardIndex].scrollIntoView({behavior: "auto", block: "nearest", inline: "center" })
+                divRef.current[containerCount][nextCardIndex].focus();
+                //divRef.current[containerCount][nextCardIndex].scrollIntoView({ behavior: "auto", block: "nearest", inline: "center" })
             }
         }
     };
@@ -168,23 +203,33 @@ function Favorite() {
         if (menuFocused && activePage.length > 0) {
             if (activePage === "profile") {
                 sessionStorage.clear();
-                navigate('/' + activePage)
+                window.location.href = '/' + activePage
             } else if (activePage === "logout") {
                 localStorage.clear()
                 sessionStorage.clear()
-                navigate('/' + activePage)
+                window.location.href ='/' + activePage
             } else if (window.location.pathname === "/" + activePage) {
                 window.location.reload()
             } else {
                 console.log("to aqui", activePage)
-                navigate(`/${activePage}`)
+                window.location.href =`/${activePage}`
             }
         } else {
-
+            if(haveFocusedEvent) {
+                if(focusedContent.type === "VOD") {
+                    console.log("o focused é", focusedContent)
+                    window.location.href = `/event/${focusedContent.type + "/" + focusedContent.id}`
+                    //event/VOD/id
+                } else {
+                    window.location.href = `/event/${"TV/" + focusedContent.id}`
+                    //event/TV/165623461
+                }
+            }
         }
     };
 
     const handleEscape = () => {
+        window.history.back();
         console.log("Escape pressionado");
 
         // Implemente a lógica para quando o usuário pressionar Escape (ex: sair do foco)
@@ -194,9 +239,11 @@ function Favorite() {
         containerCount,
         cardCount,
         menuCount,
+        buttonCount,
         setContainerCount,
         setCardCount,
         setMenuCount,
+        setButtonCount,
     } = useKeyNavigation({
         menuFocused,
         selectableContainers,
@@ -228,17 +275,41 @@ function Favorite() {
                         status={menuFocused}
                         ref={menuRef}
                         activePage={setActivePage}
+                        setUserData={setUserData}
                     />
 
 
-                    <div
-                        className="cardRows"
-                        ref={divRef}
+                    <div className="favoriteContainer">
 
-                        style={{
-                            maxHeight: haveFocusedEvent === true ? "560px" : "1080px"
-                        }}
-                    >
+                        <div className="recordingContainer">
+                            <h3 className="paddingLeftDefault">Gravações</h3>
+                            <div className="recordingAvailable paddingLeftDefault">
+                                <div className="recordingAvailablePercentual"></div>
+                                <div className="recordingAvailableInfo">
+                                    <h5>Espaço de gravação</h5>
+                                    <h4>Você tem {userData.customers_recording_length - userData.customers_recording_used} de minutos {userData.customers_recording_length} restantes</h4>
+                                </div>
+                            </div>
+
+                            {recordingContent.length > 0
+                                ?
+                                <RenderRecordingCards item={recordingContent} setFocusedContent={setFocusedContent} divRef={divRef} setHaveFocusedEvent={setHaveFocusedEvent}/>
+                                :
+                                <h4 className="paddingLeftDefault">Você não tem nenhum conteúdo gravado</h4>
+                            }
+                        </div>
+
+                        <div className="myListContainer">
+                            <h3 className="paddingLeftDefault">Minha Lista</h3>
+
+                            {myListContent.length > 0
+                                ?
+                                <RenderMyListCards item={myListContent} setFocusedContent={setFocusedContent} divRef={divRef} recordingLength={recordingContent.length} setHaveFocusedEvent={setHaveFocusedEvent}/>
+                                :
+                                <h4 className="paddingLeftDefault">Você não tem nenhum conteúdo na sua lista</h4>
+                            }
+                        </div>
+
 
                     </div>
 

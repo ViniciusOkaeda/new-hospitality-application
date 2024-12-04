@@ -30,7 +30,7 @@ function AllRoutes() {
                 <Route path="/search" element={<Search />} />
                 <Route path="/catchup" element={<Catchup />} />
                 <Route path="/catchup/detail/:channel" element={<DetailCatchup />} />
-                <Route path="/favorite" element={<Favorite />} />
+                <Route path="/saved" element={<Favorite />} />
 
 
                 <Route path="/player/:type/:event/:channel?" element={<Player />} />

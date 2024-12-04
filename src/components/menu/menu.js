@@ -14,14 +14,13 @@ import LogoutIcon from '../../images/logout.png'
 
 import { useNavigate } from "react-router-dom";
 
-export const Menu = forwardRef(({ status, activePage }, ref) => {
+export const Menu = forwardRef(({ status, activePage, setUserData }, ref) => {
 
     //console.log("meu status é", status)
     const [profile, setProfile] = useState([]);
     const [loading, setLoading] = useState(true); // Inicialmente, estamos carregando
     const [error, setError] = useState('');
     const navigate = useNavigate()
-    console.log("meu window", window.location.pathname)
 
     const buttonsRef = useRef([]); // Armazenando as refs dos botões, como um array.
     useImperativeHandle(ref, () => ({
@@ -45,6 +44,7 @@ export const Menu = forwardRef(({ status, activePage }, ref) => {
                 if (result) {
                     if (result.status === 1) {
                         console.log("meu result", result)
+                        setUserData(result.response)
                         setProfile(result.response.profiles[0])
                     }
                 }

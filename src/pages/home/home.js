@@ -292,14 +292,14 @@ function Home() {
                 console.log("oq temos", focusedContent)
                 if (focusedContent.type === "TV") {
                     //aqui vai pro event
-                    navigate(`/event/${focusedContent.type + "/" + focusedContent.id}`)
+                    window.location.href = `/event/${focusedContent.type + "/" + focusedContent.id}`
 
                 } else if (focusedContent.type === "Channel") {
                     //aqui vai pro player
 
                 } else if (focusedContent.type === "VOD") {
                     //aqui vai pro event
-                    navigate(`/event/${focusedContent.type + "/" + focusedContent.id}`)
+                    window.location.href = `/event/${focusedContent.type + "/" + focusedContent.id}`
 
                 }
 
@@ -382,7 +382,12 @@ function Home() {
             case "playlist":
                 switch (item.style) {
                     case "full_width_middle":
-                        return <RenderCardsWithBackground item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} buttonRefs={buttonRefs} />
+                        switch (item.type_of_view) {
+                            case "playlist":
+                                return <RenderCardsWithBackground item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} buttonRefs={buttonRefs} />
+                            case "carousel":
+                                
+                        }
                     case "normal":
                         return <RenderCards item={item} idx1={idx1} setFocusedContent={setFocusedContent} setHaveFocusedEvent={setHaveFocusedEvent} model={1} buttonRefs={buttonRefs} />
                 }

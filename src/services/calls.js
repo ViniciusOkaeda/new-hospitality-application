@@ -52,6 +52,28 @@ export const LoginMotvWithToken = async (navigate) => {
     }
 }
 
+
+//call para retornar todos os dados do usuário
+export const GetCustomerData = async () => {
+
+    try {
+        const response = await api.post('getHomepageV2',
+            {
+                authorization: 'Bearer ' + auth,
+                includeData: true,
+                profileId: profile,
+                language: language,
+                devicesType: devicesType
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        throw error;
+    }
+
+}
+
 //call para retornar todos os eventos da homepage
 export const GetHomepageV2 = async () => {
 
