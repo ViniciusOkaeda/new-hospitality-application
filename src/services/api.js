@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: "https://hospitality.youcast.tv.br/",
+    baseURL: "",
     headers: {
       "Content-Type": "application/json",
     }
